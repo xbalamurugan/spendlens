@@ -119,14 +119,25 @@ function Transactions() {
             </select>
             <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           </div>
-          {isFiltered && (
-            <button
-              onClick={clearFilters}
-              className="ml-auto text-sm font-medium text-primary transition-colors hover:underline"
-            >
-              Clear filters
-            </button>
-          )}
+          <div className="ml-auto flex items-center gap-3">
+            {isFiltered && (
+              <button
+                onClick={clearFilters}
+                className="text-sm font-medium text-primary transition-colors hover:underline"
+              >
+                Clear filters
+              </button>
+            )}
+            {transactions.length > 0 && (
+              <button
+                onClick={() => setConfirmOpen(true)}
+                className="inline-flex items-center gap-1.5 rounded-full border border-destructive/60 px-4 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+              >
+                <Trash2 className="h-4 w-4" />
+                Clear All Transactions
+              </button>
+            )}
+          </div>
         </div>
 
         <Card className="mt-6 p-2 sm:p-4">
