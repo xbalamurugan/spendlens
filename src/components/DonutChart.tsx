@@ -24,6 +24,7 @@ export function DonutChart({
             outerRadius="94%"
             paddingAngle={2}
             stroke="none"
+            isAnimationActive={false}
           >
             {data.map((d) => (
               <Cell key={d.name} fill={CATEGORY_COLORS[d.name] ?? "var(--color-chart-3)"} />
