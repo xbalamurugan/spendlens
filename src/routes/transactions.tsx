@@ -75,6 +75,13 @@ function Transactions() {
     setRange("all");
   };
 
+  const handleDeleteAll = () => {
+    clearAllTransactions();
+    setConfirmOpen(false);
+    clearFilters();
+    toast.success("All transactions deleted");
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
