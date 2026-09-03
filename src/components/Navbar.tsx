@@ -110,7 +110,7 @@ export function Navbar() {
                       }`}
                     >
                       {t.amount < 0 ? "-" : "+"}
-                      {fmtUSD(Math.abs(t.amount))}
+                      {money(Math.abs(t.amount))}
                     </span>
                   </li>
                 ))}
