@@ -15,11 +15,11 @@ export function TransactionRow({ txn }: { txn: Txn }) {
       <span className="justify-self-end sm:justify-self-start">
         <span
           className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-foreground"
-          style={{ backgroundColor: "var(--color-muted)" }}
+          style={{ backgroundColor: "var(--muted)" }}
         >
           <span
             className="h-2 w-2 rounded-full"
-            style={{ backgroundColor: CATEGORY_COLORS[txn.category] ?? "var(--color-chart-3)" }}
+            style={{ backgroundColor: CATEGORY_COLORS[txn.category] ?? "var(--chart-3)" }}
           />
           {txn.category}
         </span>

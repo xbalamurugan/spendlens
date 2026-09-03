@@ -14,7 +14,7 @@ export function CategoryRow({
       <div className="flex items-center gap-3">
         <span
           className="h-2.5 w-2.5 rounded-full"
-          style={{ backgroundColor: CATEGORY_COLORS[name] ?? "var(--color-chart-3)" }}
+          style={{ backgroundColor: CATEGORY_COLORS[name] ?? "var(--chart-3)" }}
         />
         <span className="text-sm font-medium text-foreground">{name}</span>
       </div>

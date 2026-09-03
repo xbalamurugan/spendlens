@@ -18,12 +18,12 @@ export const CATEGORIES = [
 ] as const;
 
 export const CATEGORY_COLORS: Record<string, string> = {
-  "Dining Out": "var(--color-chart-1)",
-  "Food & Drink": "var(--color-chart-2)",
-  Transport: "var(--color-chart-3)",
-  Shopping: "var(--color-chart-4)",
-  Bills: "var(--color-chart-5)",
-  Income: "var(--color-primary)",
+  "Dining Out": "var(--chart-1)",
+  "Food & Drink": "var(--chart-2)",
+  Transport: "var(--chart-3)",
+  Shopping: "var(--chart-4)",
+  Bills: "var(--chart-5)",
+  Income: "var(--primary)",
 };
 
 const seed: Txn[] = [

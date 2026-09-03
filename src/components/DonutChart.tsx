@@ -27,7 +27,7 @@ export function DonutChart({
             isAnimationActive={false}
           >
             {data.map((d) => (
-              <Cell key={d.name} fill={CATEGORY_COLORS[d.name] ?? "var(--color-chart-3)"} />
+              <Cell key={d.name} fill={CATEGORY_COLORS[d.name] ?? "var(--chart-3)"} />
             ))}
           </Pie>
         </PieChart>

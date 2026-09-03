@@ -34,30 +34,30 @@ export function TrendChart({
         <AreaChart data={data} margin={{ top: 10, right: 8, bottom: 0, left: showAxis ? 0 : -30 }}>
           <defs>
             <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="var(--color-primary)" stopOpacity={0.28} />
-              <stop offset="100%" stopColor="var(--color-primary)" stopOpacity={0.02} />
+              <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.28} />
+              <stop offset="100%" stopColor="var(--primary)" stopOpacity={0.02} />
             </linearGradient>
           </defs>
-          <CartesianGrid stroke="var(--color-border)" vertical={false} />
+          <CartesianGrid stroke="var(--border)" vertical={false} />
           <XAxis
             dataKey="month"
             tickLine={false}
             axisLine={false}
-            tick={{ fill: "var(--color-muted-foreground)", fontSize: 12 }}
+            tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
           />
           <YAxis
             hide={!showAxis}
             tickLine={false}
             axisLine={false}
             width={48}
-            tick={{ fill: "var(--color-muted-foreground)", fontSize: 12 }}
+            tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
             tickFormatter={(v: number) => `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`}
           />
-          <Tooltip content={<TooltipCard />} cursor={{ stroke: "var(--color-border)" }} />
+          <Tooltip content={<TooltipCard />} cursor={{ stroke: "var(--border)" }} />
           <Area
             type="monotone"
             dataKey="value"
-            stroke="var(--color-primary)"
+            stroke="var(--primary)"
             strokeWidth={2.5}
             fill="url(#trendFill)"
             isAnimationActive={false}
