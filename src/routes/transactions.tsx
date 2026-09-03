@@ -1,6 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CalendarDays, ChevronDown, Inbox } from "lucide-react";
+import { CalendarDays, ChevronDown, Inbox, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Navbar } from "@/components/Navbar";
 import { Card } from "@/components/SummaryCard";
 import { TransactionRow } from "@/components/TransactionRow";
@@ -43,9 +54,10 @@ function withinRange(isoDate: string, range: RangeId) {
 }
 
 function Transactions() {
-  const { transactions } = useSpendLens();
+  const { transactions, clearAllTransactions } = useSpendLens();
   const [category, setCategory] = useState("All Categories");
   const [range, setRange] = useState<RangeId>("all");
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const filtered = useMemo(
     () =>
@@ -61,6 +73,13 @@ function Transactions() {
   const clearFilters = () => {
     setCategory("All Categories");
     setRange("all");
+  };
+
+  const handleDeleteAll = () => {
+    clearAllTransactions();
+    setConfirmOpen(false);
+    clearFilters();
+    toast.success("All transactions deleted");
   };
 
   return (
@@ -100,14 +119,25 @@ function Transactions() {
             </select>
             <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           </div>
-          {isFiltered && (
-            <button
-              onClick={clearFilters}
-              className="ml-auto text-sm font-medium text-primary transition-colors hover:underline"
-            >
-              Clear filters
-            </button>
-          )}
+          <div className="ml-auto flex items-center gap-3">
+            {isFiltered && (
+              <button
+                onClick={clearFilters}
+                className="text-sm font-medium text-primary transition-colors hover:underline"
+              >
+                Clear filters
+              </button>
+            )}
+            {transactions.length > 0 && (
+              <button
+                onClick={() => setConfirmOpen(true)}
+                className="inline-flex items-center gap-1.5 rounded-full border border-destructive/60 px-4 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+              >
+                <Trash2 className="h-4 w-4" />
+                Clear All Transactions
+              </button>
+            )}
+          </div>
         </div>
 
         <Card className="mt-6 p-2 sm:p-4">
@@ -139,6 +169,26 @@ function Transactions() {
           )}
         </Card>
       </main>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete all transactions?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This can't be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteAll}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
