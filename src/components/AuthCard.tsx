@@ -1,0 +1,154 @@
+import { useNavigate } from "@tanstack/react-router";
+import { AlertCircle, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
+
+type Tab = "login" | "signup";
+
+function Field({
+  label,
+  type = "text",
+  placeholder,
+  value,
+  onChange,
+  error,
+  right,
+}: {
+  label: string;
+  type?: string;
+  placeholder?: string;
+  value: string;
+  onChange: (v: string) => void;
+  error?: string;
+  right?: React.ReactNode;
+}) {
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {label}
+        </label>
+        {right}
+      </div>
+      <input
+        type={type}
+        value={value}
+        placeholder={placeholder}
+        onChange={(e) => onChange(e.target.value)}
+        className={cn(
+          "mt-2 w-full border-b-2 bg-transparent pb-2 text-sm text-foreground outline-none placeholder:text-muted-foreground/70 transition-colors",
+          error ? "border-destructive" : "border-border focus:border-primary",
+        )}
+      />
+      {error && (
+        <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-destructive">
+          <AlertCircle className="h-3.5 w-3.5" />
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+export function AuthCard() {
+  const navigate = useNavigate();
+  const [tab, setTab] = useState<Tab>("login");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
+
+  const submit = () => {
+    const next: Record<string, string> = {};
+    if (tab === "signup" && name.trim().length < 2) next["name"] = "Please enter your full name";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) next["email"] = "Invalid email format";
+    if (password.length < 6) next["password"] = "Password must be at least 6 characters";
+    setErrors(next);
+    if (Object.keys(next).length) return;
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      navigate({ to: "/dashboard" });
+    }, 1000);
+  };
+
+  return (
+    <div className="w-full max-w-[460px] rounded-xl border border-border bg-card p-6 shadow-card sm:p-8">
+      <div className="flex gap-6 border-b border-border">
+        {(["login", "signup"] as Tab[]).map((t) => (
+          <button
+            key={t}
+            onClick={() => {
+              setTab(t);
+              setErrors({});
+            }}
+            className={cn(
+              "-mb-px border-b-2 pb-3 text-xs font-bold uppercase tracking-widest transition-colors",
+              tab === t
+                ? "border-primary text-primary"
+                : "border-transparent text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {t === "login" ? "Log In" : "Sign Up"}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-8 grid gap-6">
+        {tab === "signup" && (
+          <Field
+            label="Full Name"
+            placeholder="John Doe"
+            value={name}
+            onChange={setName}
+            {...(errors["name"] ? { error: errors["name"] } : {})}
+          />
+        )}
+        <Field
+          label="Email"
+          type="email"
+          placeholder="your@email.com"
+          value={email}
+          onChange={setEmail}
+          {...(errors["email"] ? { error: errors["email"] } : {})}
+        />
+        <Field
+          label="Password"
+          type="password"
+          placeholder="••••••••"
+          value={password}
+          onChange={setPassword}
+          {...(errors["password"] ? { error: errors["password"] } : {})}
+          {...(tab === "login"
+            ? {
+                right: (
+                  <button className="text-xs font-semibold text-primary hover:underline">
+                    Forgot?
+                  </button>
+                ),
+              }
+            : {})}
+        />
+      </div>
+
+      <button
+        onClick={submit}
+        disabled={loading}
+        className="mt-8 flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-xs font-bold uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-70"
+      >
+        {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+        {loading ? (tab === "login" ? "Logging in" : "Creating") : tab === "login" ? "Log in" : "Create account"}
+      </button>
+
+      <div className="mt-6 text-center">
+        <button
+          onClick={() => navigate({ to: "/dashboard" })}
+          className="text-sm text-muted-foreground transition-colors hover:text-primary"
+        >
+          Continue as guest
+        </button>
+      </div>
+    </div>
+  );
+}
