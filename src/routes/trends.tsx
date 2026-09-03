@@ -26,7 +26,7 @@ export const Route = createFileRoute("/trends")({
       },
     ],
   }),
-  component: Trends;
+  component: Trends,
 });
 
 function Trends() {
