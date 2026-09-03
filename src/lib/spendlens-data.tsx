@@ -78,6 +78,7 @@ export const money = (n: number) =>
 type Ctx = {
   transactions: Txn[];
   addTransaction: (t: Omit<Txn, "id">) => void;
+  clearAllTransactions: () => void;
 };
 
 const SpendLensContext = createContext<Ctx | null>(null);
@@ -92,6 +93,7 @@ export function SpendLensProvider({ children }: { children: ReactNode }) {
         setTransactions((prev) =>
           [{ ...t, id: crypto.randomUUID() }, ...prev].sort((a, b) => b.date.localeCompare(a.date)),
         ),
+      clearAllTransactions: () => setTransactions([]),
     }),
     [transactions],
   );
