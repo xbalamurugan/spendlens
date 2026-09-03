@@ -54,9 +54,10 @@ function withinRange(isoDate: string, range: RangeId) {
 }
 
 function Transactions() {
-  const { transactions } = useSpendLens();
+  const { transactions, clearAllTransactions } = useSpendLens();
   const [category, setCategory] = useState("All Categories");
   const [range, setRange] = useState<RangeId>("all");
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   const filtered = useMemo(
     () =>
