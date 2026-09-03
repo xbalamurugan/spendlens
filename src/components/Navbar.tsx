@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Bell, LogOut, Menu, UserRound, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { fmtUSD, useSpendLens } from "@/lib/spendlens-data";
+import { money, useSpendLens } from "@/lib/spendlens-data";
 
 const links = [
   { to: "/dashboard", label: "Dashboard" },
