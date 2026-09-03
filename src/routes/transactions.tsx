@@ -1,6 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CalendarDays, ChevronDown, Inbox } from "lucide-react";
+import { CalendarDays, ChevronDown, Inbox, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Navbar } from "@/components/Navbar";
 import { Card } from "@/components/SummaryCard";
 import { TransactionRow } from "@/components/TransactionRow";
