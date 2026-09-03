@@ -19,7 +19,7 @@ export function Pill({
   tone = "primary",
 }: {
   children: ReactNode;
-  tone?: "primary" | "positive" | "negative";
+  tone?: "primary" | "positive" | "negative" | undefined;
 }) {
   return (
     <span
@@ -46,7 +46,7 @@ export function SummaryCard({
   label: string;
   value: string;
   pill?: string;
-  pillTone?: "primary" | "positive" | "negative";
+  pillTone?: "primary" | "positive" | "negative" | undefined;
   sub?: string;
   progress?: number;
 }) {
