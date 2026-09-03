@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CalendarDays, ChevronDown, Inbox } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Card } from "@/components/SummaryCard";
 import { TransactionRow } from "@/components/TransactionRow";
@@ -25,14 +25,43 @@ export const Route = createFileRoute("/transactions")({
   component: Transactions,
 });
 
+const RANGES = [
+  { id: "all", label: "All time" },
+  { id: "7d", label: "Last 7 days" },
+  { id: "30d", label: "Last 30 days" },
+  { id: "90d", label: "Last 90 days" },
+] as const;
+
+type RangeId = (typeof RANGES)[number]["id"];
+
+function withinRange(isoDate: string, range: RangeId) {
+  if (range === "all") return true;
+  const days = range === "7d" ? 7 : range === "30d" ? 30 : 90;
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - days);
+  return new Date(isoDate) >= cutoff;
+}
+
 function Transactions() {
   const { transactions } = useSpendLens();
   const [category, setCategory] = useState("All Categories");
+  const [range, setRange] = useState<RangeId>("all");
 
-  const filtered =
-    category === "All Categories"
-      ? transactions
-      : transactions.filter((t) => t.category === category);
+  const filtered = useMemo(
+    () =>
+      transactions.filter(
+        (t) =>
+          (category === "All Categories" || t.category === category) &&
+          withinRange(t.date, range),
+      ),
+    [transactions, category, range],
+  );
+
+  const isFiltered = category !== "All Categories" || range !== "all";
+  const clearFilters = () => {
+    setCategory("All Categories");
+    setRange("all");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -41,14 +70,27 @@ function Transactions() {
         <h1 className="text-2xl font-bold tracking-tight text-foreground">Transactions</h1>
 
         <div className="mt-6 flex flex-wrap items-center gap-3">
-          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm text-foreground shadow-card">
-            <CalendarDays className="h-4 w-4 text-muted-foreground" />
-            Oct 1 - Oct 31, 2024
-          </span>
+          <div className="relative">
+            <select
+              value={range}
+              onChange={(e) => setRange(e.target.value as RangeId)}
+              aria-label="Date range"
+              className="appearance-none rounded-full border border-border bg-card py-2 pl-9 pr-10 text-sm text-foreground shadow-card outline-none transition-colors hover:border-primary"
+            >
+              {RANGES.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.label}
+                </option>
+              ))}
+            </select>
+            <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          </div>
           <div className="relative">
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
+              aria-label="Category"
               className="appearance-none rounded-full border border-border bg-card py-2 pl-4 pr-10 text-sm text-foreground shadow-card outline-none transition-colors hover:border-primary"
             >
               <option>All Categories</option>
@@ -58,12 +100,14 @@ function Transactions() {
             </select>
             <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           </div>
-          <button
-            onClick={() => setCategory("All Categories")}
-            className="ml-auto text-sm font-medium text-primary hover:underline"
-          >
-            Clear filters
-          </button>
+          {isFiltered && (
+            <button
+              onClick={clearFilters}
+              className="ml-auto text-sm font-medium text-primary transition-colors hover:underline"
+            >
+              Clear filters
+            </button>
+          )}
         </div>
 
         <Card className="mt-6 p-2 sm:p-4">
@@ -81,6 +125,14 @@ function Transactions() {
               <p className="text-sm text-muted-foreground">
                 Try a different category or clear the filters.
               </p>
+              {isFiltered && (
+                <button
+                  onClick={clearFilters}
+                  className="mt-1 rounded-full border border-border px-4 py-1.5 text-sm font-medium text-primary transition-colors hover:bg-primary-soft"
+                >
+                  Clear filters
+                </button>
+              )}
             </div>
           ) : (
             filtered.map((t) => <TransactionRow key={t.id} txn={t} />)
