@@ -31,8 +31,9 @@ export const Route = createFileRoute("/trends")({
 
 function Trends() {
   const [range, setRange] = useState<RangeKey>("6M");
-  const data = TREND_ALL.slice(-RANGES[range]);
-  const avg = data.reduce((s, d) => s + d.value, 0) / data.length;
+  const { transactions } = useSpendLens();
+  const data = monthlyTotals(transactions, RANGES[range]);
+  const avg = data.reduce((s: number, d: { value: number }) => s + d.value, 0) / data.length;
   const up = (data.at(-1)?.value ?? 0) >= (data[0]?.value ?? 0);
 
   return (

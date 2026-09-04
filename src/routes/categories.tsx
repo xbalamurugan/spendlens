@@ -70,9 +70,15 @@ function Categories() {
         </div>
 
         <div className="mt-6 rounded-xl bg-primary-soft px-5 py-4 text-sm text-foreground">
-          <span className="font-bold text-primary">Insight:</span> {top.name} accounts for{" "}
-          {((top.value / total) * 100).toFixed(0)}% of your spend — about{" "}
-          {money(top.value - total / data.length)} above your typical category average.
+          <span className="font-bold text-primary">Insight:</span>{" "}
+          {top && total > 0 ? (
+            <>
+              {top.name} accounts for {((top.value / total) * 100).toFixed(0)}% of your spend —
+              about {money(top.value - total / data.length)} above your typical category average.
+            </>
+          ) : (
+            <>No expenses recorded for this period yet.</>
+          )}
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
