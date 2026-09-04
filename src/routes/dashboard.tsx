@@ -49,7 +49,11 @@ function Dashboard() {
             pill="+12%"
             pillTone="negative"
           />
-          <SummaryCard label="Top Category" value={top.name} sub={money(top.value)} />
+          <SummaryCard
+            label="Top Category"
+            value={top ? top.name : "—"}
+            sub={money(top?.value ?? 0)}
+          />
           <SummaryCard
             label="Savings Goal Progress"
             value="68%"
@@ -64,7 +68,17 @@ function Dashboard() {
             <h2 className="text-sm font-bold uppercase tracking-wide text-foreground">
               Category Breakdown
             </h2>
-            <DonutChart data={CATEGORY_TOTALS} centerLabel="Top" centerValue={top.name} />
+            {categories.length > 0 ? (
+              <DonutChart
+                data={categories}
+                centerLabel="Top"
+                centerValue={top?.name ?? "—"}
+              />
+            ) : (
+              <div className="flex h-[260px] items-center justify-center text-sm text-muted-foreground">
+                No expenses yet — add one to see your breakdown.
+              </div>
+            )}
           </Card>
           <Card>
             <h2 className="text-sm font-bold uppercase tracking-wide text-foreground">

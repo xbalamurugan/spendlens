@@ -7,7 +7,7 @@ import { TrendChart } from "@/components/TrendChart";
 import { money, monthlyTotals, useSpendLens } from "@/lib/spendlens-data";
 import { cn } from "@/lib/utils";
 
-const RANGES = { "3M": 3, "6M": 6, "1Y": 12, ALL: TREND_ALL.length } as const;
+const RANGES = { "3M": 3, "6M": 6, "1Y": 12, ALL: 24 } as const;
 type RangeKey = keyof typeof RANGES;
 
 export const Route = createFileRoute("/trends")({

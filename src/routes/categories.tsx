@@ -28,9 +28,15 @@ export const Route = createFileRoute("/categories")({
 
 function Categories() {
   const [range, setRange] = useState<"this" | "last">("this");
-  const data = range === "this" ? CATEGORY_TOTALS : LAST_MONTH_TOTALS;
-  const total = data.reduce((s, c) => s + c.value, 0);
-  const top = [...data].sort((a, b) => b.value - a.value)[0]!;
+  const { transactions } = useSpendLens();
+  const now = new Date();
+  const monthKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  const thisKey = monthKey(now);
+  const lastKey = monthKey(new Date(now.getFullYear(), now.getMonth() - 1, 1));
+  const key = range === "this" ? thisKey : lastKey;
+  const data = categoryTotals(transactions.filter((t) => t.date.startsWith(key)));
+  const total = data.reduce((s: number, c: { value: number }) => s + c.value, 0);
+  const top = data[0];
 
   return (
     <div className="min-h-screen bg-background">
