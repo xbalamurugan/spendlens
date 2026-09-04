@@ -6,7 +6,7 @@ import { DonutChart } from "@/components/DonutChart";
 import { Navbar } from "@/components/Navbar";
 import { Card, SummaryCard } from "@/components/SummaryCard";
 import { TrendChart } from "@/components/TrendChart";
-import { CATEGORY_TOTALS, TREND_ALL, money } from "@/lib/spendlens-data";
+import { categoryTotals, money, monthlyTotals, thisMonthTotal, useSpendLens } from "@/lib/spendlens-data";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
