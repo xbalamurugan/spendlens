@@ -95,14 +95,20 @@ function Categories() {
               Categories
             </h2>
             <div className="mt-2">
-              {data.map((c) => (
-                <CategoryRow
-                  key={c.name}
-                  name={c.name}
-                  value={c.value}
-                  percent={(c.value / total) * 100}
-                />
-              ))}
+              {data.length === 0 ? (
+                <p className="py-10 text-center text-sm text-muted-foreground">
+                  No expenses recorded for this period yet.
+                </p>
+              ) : (
+                data.map((c) => (
+                  <CategoryRow
+                    key={c.name}
+                    name={c.name}
+                    value={c.value}
+                    percent={total > 0 ? (c.value / total) * 100 : 0}
+                  />
+                ))
+              )}
             </div>
           </Card>
         </div>
