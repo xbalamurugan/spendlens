@@ -49,8 +49,8 @@ function Dashboard() {
           <SummaryCard
             label="Total Spent This Month"
             value={money(total)}
-            pill="+12%"
-            pillTone="negative"
+            pill={`${changePct >= 0 ? "+" : ""}${changePct}%`}
+            pillTone={changePct > 0 ? "negative" : "positive"}
           />
           <SummaryCard
             label="Top Category"
