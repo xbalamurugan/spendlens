@@ -4,7 +4,7 @@ import { CategoryRow } from "@/components/CategoryRow";
 import { DonutChart } from "@/components/DonutChart";
 import { Navbar } from "@/components/Navbar";
 import { Card } from "@/components/SummaryCard";
-import { CATEGORY_TOTALS, LAST_MONTH_TOTALS, money } from "@/lib/spendlens-data";
+import { categoryTotals, money, useSpendLens } from "@/lib/spendlens-data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/categories")({

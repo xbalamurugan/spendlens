@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Card } from "@/components/SummaryCard";
 import { TrendChart } from "@/components/TrendChart";
-import { TREND_ALL, money } from "@/lib/spendlens-data";
+import { money, monthlyTotals, useSpendLens } from "@/lib/spendlens-data";
 import { cn } from "@/lib/utils";
 
 const RANGES = { "3M": 3, "6M": 6, "1Y": 12, ALL: TREND_ALL.length } as const;

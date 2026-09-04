@@ -29,9 +29,11 @@ export const Route = createFileRoute("/dashboard")({
 
 function Dashboard() {
   const [open, setOpen] = useState(false);
-  const total = CATEGORY_TOTALS.reduce((s, c) => s + c.value, 0);
-  const top = CATEGORY_TOTALS[0]!;
-  const trend6 = TREND_ALL.slice(-6);
+  const { transactions } = useSpendLens();
+  const total = thisMonthTotal(transactions);
+  const categories = categoryTotals(transactions);
+  const top = categories[0];
+  const trend6 = monthlyTotals(transactions, 6);
 
   return (
     <div className="min-h-screen bg-background">
