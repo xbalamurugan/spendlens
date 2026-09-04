@@ -34,6 +34,9 @@ function Dashboard() {
   const categories = categoryTotals(transactions);
   const top = categories[0];
   const trend6 = monthlyTotals(transactions, 6);
+  const lastMonth = trend6[trend6.length - 2]?.value ?? 0;
+  const changePct =
+    lastMonth > 0 ? Math.round(((total - lastMonth) / lastMonth) * 100) : total > 0 ? 100 : 0;
 
   return (
     <div className="min-h-screen bg-background">
