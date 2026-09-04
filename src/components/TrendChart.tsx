@@ -51,7 +51,9 @@ export function TrendChart({
             axisLine={false}
             width={48}
             tick={{ fill: "var(--muted-foreground)", fontSize: 12 }}
-            tickFormatter={(v: number) => `$${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`}
+            tickFormatter={(v: number) =>
+              `₹${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v.toLocaleString("en-IN")}`
+            }
           />
           <Tooltip content={<TooltipCard />} cursor={{ stroke: "var(--border)" }} />
           <Area

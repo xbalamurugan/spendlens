@@ -57,7 +57,7 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
             Amount
           </label>
           <div className="mt-2 flex items-center gap-2 border-b-2 border-border pb-2 focus-within:border-primary">
-            <span className="text-3xl font-semibold text-muted-foreground">$</span>
+            <span className="text-3xl font-semibold text-muted-foreground">₹</span>
             <input
               inputMode="decimal"
               value={amount}
