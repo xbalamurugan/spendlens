@@ -4,7 +4,7 @@ import { CategoryRow } from "@/components/CategoryRow";
 import { DonutChart } from "@/components/DonutChart";
 import { Navbar } from "@/components/Navbar";
 import { Card } from "@/components/SummaryCard";
-import { CATEGORY_TOTALS, LAST_MONTH_TOTALS, money } from "@/lib/spendlens-data";
+import { categoryTotals, money, useSpendLens } from "@/lib/spendlens-data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/categories")({
@@ -28,9 +28,15 @@ export const Route = createFileRoute("/categories")({
 
 function Categories() {
   const [range, setRange] = useState<"this" | "last">("this");
-  const data = range === "this" ? CATEGORY_TOTALS : LAST_MONTH_TOTALS;
-  const total = data.reduce((s, c) => s + c.value, 0);
-  const top = [...data].sort((a, b) => b.value - a.value)[0]!;
+  const { transactions } = useSpendLens();
+  const now = new Date();
+  const monthKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  const thisKey = monthKey(now);
+  const lastKey = monthKey(new Date(now.getFullYear(), now.getMonth() - 1, 1));
+  const key = range === "this" ? thisKey : lastKey;
+  const data = categoryTotals(transactions.filter((t) => t.date.startsWith(key)));
+  const total = data.reduce((s: number, c: { value: number }) => s + c.value, 0);
+  const top = data[0];
 
   return (
     <div className="min-h-screen bg-background">
@@ -64,9 +70,15 @@ function Categories() {
         </div>
 
         <div className="mt-6 rounded-xl bg-primary-soft px-5 py-4 text-sm text-foreground">
-          <span className="font-bold text-primary">Insight:</span> {top.name} accounts for{" "}
-          {((top.value / total) * 100).toFixed(0)}% of your spend — about{" "}
-          {money(top.value - total / data.length)} above your typical category average.
+          <span className="font-bold text-primary">Insight:</span>{" "}
+          {top && total > 0 ? (
+            <>
+              {top.name} accounts for {((top.value / total) * 100).toFixed(0)}% of your spend —
+              about {money(top.value - total / data.length)} above your typical category average.
+            </>
+          ) : (
+            <>No expenses recorded for this period yet.</>
+          )}
         </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
@@ -83,14 +95,20 @@ function Categories() {
               Categories
             </h2>
             <div className="mt-2">
-              {data.map((c) => (
-                <CategoryRow
-                  key={c.name}
-                  name={c.name}
-                  value={c.value}
-                  percent={(c.value / total) * 100}
-                />
-              ))}
+              {data.length === 0 ? (
+                <p className="py-10 text-center text-sm text-muted-foreground">
+                  No expenses recorded for this period yet.
+                </p>
+              ) : (
+                data.map((c) => (
+                  <CategoryRow
+                    key={c.name}
+                    name={c.name}
+                    value={c.value}
+                    percent={total > 0 ? (c.value / total) * 100 : 0}
+                  />
+                ))
+              )}
             </div>
           </Card>
         </div>

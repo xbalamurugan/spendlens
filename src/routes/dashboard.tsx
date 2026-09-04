@@ -6,7 +6,7 @@ import { DonutChart } from "@/components/DonutChart";
 import { Navbar } from "@/components/Navbar";
 import { Card, SummaryCard } from "@/components/SummaryCard";
 import { TrendChart } from "@/components/TrendChart";
-import { CATEGORY_TOTALS, TREND_ALL, money } from "@/lib/spendlens-data";
+import { categoryTotals, money, monthlyTotals, thisMonthTotal, useSpendLens } from "@/lib/spendlens-data";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -29,9 +29,14 @@ export const Route = createFileRoute("/dashboard")({
 
 function Dashboard() {
   const [open, setOpen] = useState(false);
-  const total = CATEGORY_TOTALS.reduce((s, c) => s + c.value, 0);
-  const top = CATEGORY_TOTALS[0]!;
-  const trend6 = TREND_ALL.slice(-6);
+  const { transactions } = useSpendLens();
+  const total = thisMonthTotal(transactions);
+  const categories = categoryTotals(transactions);
+  const top = categories[0];
+  const trend6 = monthlyTotals(transactions, 6);
+  const lastMonth = trend6[trend6.length - 2]?.value ?? 0;
+  const changePct =
+    lastMonth > 0 ? Math.round(((total - lastMonth) / lastMonth) * 100) : total > 0 ? 100 : 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -44,10 +49,14 @@ function Dashboard() {
           <SummaryCard
             label="Total Spent This Month"
             value={money(total)}
-            pill="+12%"
-            pillTone="negative"
+            pill={`${changePct >= 0 ? "+" : ""}${changePct}%`}
+            pillTone={changePct > 0 ? "negative" : "positive"}
           />
-          <SummaryCard label="Top Category" value={top.name} sub={money(top.value)} />
+          <SummaryCard
+            label="Top Category"
+            value={top ? top.name : "—"}
+            sub={money(top?.value ?? 0)}
+          />
           <SummaryCard
             label="Savings Goal Progress"
             value="68%"
@@ -62,7 +71,17 @@ function Dashboard() {
             <h2 className="text-sm font-bold uppercase tracking-wide text-foreground">
               Category Breakdown
             </h2>
-            <DonutChart data={CATEGORY_TOTALS} centerLabel="Top" centerValue={top.name} />
+            {categories.length > 0 ? (
+              <DonutChart
+                data={categories}
+                centerLabel="Top"
+                centerValue={top?.name ?? "—"}
+              />
+            ) : (
+              <div className="flex h-[260px] items-center justify-center text-sm text-muted-foreground">
+                No expenses yet — add one to see your breakdown.
+              </div>
+            )}
           </Card>
           <Card>
             <h2 className="text-sm font-bold uppercase tracking-wide text-foreground">

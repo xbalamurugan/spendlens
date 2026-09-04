@@ -26,51 +26,71 @@ export const CATEGORY_COLORS: Record<string, string> = {
   Income: "var(--primary)",
 };
 
+const thisMonth = new Date().toISOString().slice(0, 7); // yyyy-mm
+
 const seed: Txn[] = [
-  { id: "1", date: "2024-10-28", category: "Dining Out", note: "Sushi with Anna", amount: -84.2 },
-  { id: "2", date: "2024-10-27", category: "Transport", note: "Monthly metro pass", amount: -75 },
-  { id: "3", date: "2024-10-26", category: "Income", note: "Freelance invoice", amount: 1200 },
-  { id: "4", date: "2024-10-24", category: "Shopping", note: "Running shoes", amount: -139.99 },
-  { id: "5", date: "2024-10-22", category: "Bills", note: "Electricity", amount: -96.4 },
-  { id: "6", date: "2024-10-19", category: "Food & Drink", note: "Weekly groceries", amount: -152.3 },
-  { id: "7", date: "2024-10-17", category: "Dining Out", note: "Coffee & bagel", amount: -12.75 },
-  { id: "8", date: "2024-10-14", category: "Shopping", note: "Desk lamp", amount: -48.0 },
-  { id: "9", date: "2024-10-11", category: "Bills", note: "Internet", amount: -60.0 },
-  { id: "10", date: "2024-10-08", category: "Transport", note: "Airport taxi", amount: -42.5 },
-  { id: "11", date: "2024-10-05", category: "Food & Drink", note: "Farmers market", amount: -63.1 },
-  { id: "12", date: "2024-10-02", category: "Dining Out", note: "Team lunch", amount: -58.4 },
+  // current month
+  { id: "1", date: `${thisMonth}-12`, category: "Dining Out", note: "Sushi with Anna", amount: -84.2 },
+  { id: "2", date: `${thisMonth}-10`, category: "Transport", note: "Monthly metro pass", amount: -75 },
+  { id: "3", date: `${thisMonth}-08`, category: "Shopping", note: "Running shoes", amount: -139.99 },
+  { id: "4", date: `${thisMonth}-05`, category: "Bills", note: "Electricity", amount: -96.4 },
+  { id: "5", date: `${thisMonth}-03`, category: "Food & Drink", note: "Weekly groceries", amount: -152.3 },
+  { id: "6", date: `${thisMonth}-01`, category: "Income", note: "Freelance invoice", amount: 1200 },
+  // prior months
+  { id: "7", date: "2026-08-22", category: "Dining Out", note: "Team lunch", amount: -58.4 },
+  { id: "8", date: "2026-08-15", category: "Food & Drink", note: "Groceries", amount: -120.0 },
+  { id: "9", date: "2026-08-04", category: "Bills", note: "Internet", amount: -60.0 },
+  { id: "10", date: "2026-07-18", category: "Shopping", note: "Desk lamp", amount: -48.0 },
+  { id: "11", date: "2026-07-09", category: "Transport", note: "Airport taxi", amount: -42.5 },
+  { id: "12", date: "2026-06-14", category: "Food & Drink", note: "Farmers market", amount: -63.1 },
+  { id: "13", date: "2026-05-11", category: "Dining Out", note: "Coffee & bagel", amount: -12.75 },
+  { id: "14", date: "2026-04-06", category: "Bills", note: "Phone bill", amount: -35.0 },
 ];
 
-export const CATEGORY_TOTALS = [
-  { name: "Dining Out", value: 850 },
-  { name: "Food & Drink", value: 620 },
-  { name: "Shopping", value: 470 },
-  { name: "Transport", value: 310 },
-  { name: "Bills", value: 265 },
-];
+/** Spend per category (expenses only), sorted descending. */
+export function categoryTotals(txns: Txn[]): { name: string; value: number }[] {
+  const map = new Map<string, number>();
+  for (const t of txns) {
+    if (t.amount >= 0) continue;
+    map.set(t.category, (map.get(t.category) ?? 0) + Math.abs(t.amount));
+  }
+  return [...map.entries()]
+    .map(([name, value]) => ({ name, value: Math.round(value * 100) / 100 }))
+    .sort((a, b) => b.value - a.value);
+}
 
-export const LAST_MONTH_TOTALS = [
-  { name: "Dining Out", value: 690 },
-  { name: "Food & Drink", value: 585 },
-  { name: "Shopping", value: 610 },
-  { name: "Transport", value: 280 },
-  { name: "Bills", value: 258 },
-];
+const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-export const TREND_ALL = [
-  { month: "Jul", value: 1980 },
-  { month: "Aug", value: 2240 },
-  { month: "Sep", value: 2075 },
-  { month: "Oct", value: 2410 },
-  { month: "Nov", value: 2180 },
-  { month: "Dec", value: 2680 },
-  { month: "Jan", value: 2120 },
-  { month: "Feb", value: 1890 },
-  { month: "Mar", value: 2340 },
-  { month: "Apr", value: 2050 },
-  { month: "May", value: 2475 },
-  { month: "Jun", value: 2515 },
-];
+/** Monthly expense totals for the last `months` months, oldest first. */
+export function monthlyTotals(txns: Txn[], months: number): { month: string; value: number }[] {
+  const now = new Date();
+  const buckets: { key: string; month: string; value: number }[] = [];
+  for (let i = months - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    buckets.push({
+      key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`,
+      month: MONTH_NAMES[d.getMonth()]!,
+      value: 0,
+    });
+  }
+  const byKey = new Map(buckets.map((b) => [b.key, b]));
+  for (const t of txns) {
+    if (t.amount >= 0) continue;
+    const b = byKey.get(t.date.slice(0, 7));
+    if (b) b.value += Math.abs(t.amount);
+  }
+  return buckets.map((b) => ({ month: b.month, value: Math.round(b.value * 100) / 100 }));
+}
+
+/** Total expenses in the current calendar month. */
+export function thisMonthTotal(txns: Txn[]): number {
+  const key = new Date().toISOString().slice(0, 7);
+  return Math.round(
+    txns
+      .filter((t) => t.amount < 0 && t.date.startsWith(key))
+      .reduce((s, t) => s + Math.abs(t.amount), 0) * 100,
+  ) / 100;
+}
 
 export const money = (n: number) =>
   n.toLocaleString("en-IN", {

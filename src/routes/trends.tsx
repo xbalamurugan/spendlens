@@ -4,10 +4,10 @@ import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Card } from "@/components/SummaryCard";
 import { TrendChart } from "@/components/TrendChart";
-import { TREND_ALL, money } from "@/lib/spendlens-data";
+import { money, monthlyTotals, useSpendLens } from "@/lib/spendlens-data";
 import { cn } from "@/lib/utils";
 
-const RANGES = { "3M": 3, "6M": 6, "1Y": 12, ALL: TREND_ALL.length } as const;
+const RANGES = { "3M": 3, "6M": 6, "1Y": 12, ALL: 24 } as const;
 type RangeKey = keyof typeof RANGES;
 
 export const Route = createFileRoute("/trends")({
@@ -31,8 +31,9 @@ export const Route = createFileRoute("/trends")({
 
 function Trends() {
   const [range, setRange] = useState<RangeKey>("6M");
-  const data = TREND_ALL.slice(-RANGES[range]);
-  const avg = data.reduce((s, d) => s + d.value, 0) / data.length;
+  const { transactions } = useSpendLens();
+  const data = monthlyTotals(transactions, RANGES[range]);
+  const avg = data.reduce((s: number, d: { value: number }) => s + d.value, 0) / data.length;
   const up = (data.at(-1)?.value ?? 0) >= (data[0]?.value ?? 0);
 
   return (
