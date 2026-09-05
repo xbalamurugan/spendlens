@@ -72,8 +72,14 @@ function Dashboard() {
           <SummaryCard
             label="Total Income This Month"
             value={money(income)}
-            pill={income > 0 ? `${incomeChangePct >= 0 ? "+" : ""}${incomeChangePct}%` : undefined}
-            pillTone={income > 0 ? (incomeChangePct >= 0 ? "positive" : "negative") : undefined}
+            {...(income > 0
+              ? {
+                  pill: `${incomeChangePct >= 0 ? "+" : ""}${incomeChangePct}%`,
+                  pillTone: (incomeChangePct >= 0 ? "positive" : "negative") as
+                    | "positive"
+                    | "negative",
+                }
+              : {})}
           />
           <SummaryCard
             label="Savings Goal Progress"
