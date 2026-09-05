@@ -97,6 +97,25 @@ export function thisMonthTotal(txns: Txn[]): number {
   ) / 100;
 }
 
+/** Total income in the current calendar month. */
+export function thisMonthIncome(txns: Txn[]): number {
+  const key = new Date().toISOString().slice(0, 7);
+  return Math.round(
+    txns
+      .filter((t) => t.amount > 0 && t.date.startsWith(key))
+      .reduce((s, t) => s + t.amount, 0) * 100,
+  ) / 100;
+}
+
+/** Total income in a given calendar month key (yyyy-mm). */
+export function monthIncome(txns: Txn[], monthKey: string): number {
+  return Math.round(
+    txns
+      .filter((t) => t.amount > 0 && t.date.startsWith(monthKey))
+      .reduce((s, t) => s + t.amount, 0) * 100,
+  ) / 100;
+}
+
 export const money = (n: number) =>
   n.toLocaleString("en-IN", {
     style: "currency",

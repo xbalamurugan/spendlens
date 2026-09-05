@@ -6,7 +6,7 @@ import { DonutChart } from "@/components/DonutChart";
 import { Navbar } from "@/components/Navbar";
 import { Card, SummaryCard } from "@/components/SummaryCard";
 import { TrendChart } from "@/components/TrendChart";
-import { categoryTotals, money, monthlyTotals, thisMonthTotal, useSpendLens } from "@/lib/spendlens-data";
+import { categoryTotals, money, monthlyTotals, thisMonthIncome, thisMonthTotal, useSpendLens } from "@/lib/spendlens-data";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -31,12 +31,29 @@ function Dashboard() {
   const [open, setOpen] = useState(false);
   const { transactions } = useSpendLens();
   const total = thisMonthTotal(transactions);
+  const income = thisMonthIncome(transactions);
   const categories = categoryTotals(transactions);
   const top = categories[0];
   const trend6 = monthlyTotals(transactions, 6);
   const lastMonth = trend6[trend6.length - 2]?.value ?? 0;
   const changePct =
     lastMonth > 0 ? Math.round(((total - lastMonth) / lastMonth) * 100) : total > 0 ? 100 : 0;
+
+  // Income month-over-month change vs. last month.
+  const lastMonthKey = (() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() - 1);
+    return d.toISOString().slice(0, 7);
+  })();
+  const lastMonthIncome = transactions
+    .filter((t) => t.amount > 0 && t.date.startsWith(lastMonthKey))
+    .reduce((s, t) => s + t.amount, 0);
+  const incomeChangePct =
+    lastMonthIncome > 0
+      ? Math.round(((income - lastMonthIncome) / lastMonthIncome) * 100)
+      : income > 0
+        ? 100
+        : 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -53,9 +70,16 @@ function Dashboard() {
             pillTone={changePct > 0 ? "negative" : "positive"}
           />
           <SummaryCard
-            label="Top Category"
-            value={top ? top.name : "—"}
-            sub={money(top?.value ?? 0)}
+            label="Total Income This Month"
+            value={money(income)}
+            {...(income > 0
+              ? {
+                  pill: `${incomeChangePct >= 0 ? "+" : ""}${incomeChangePct}%`,
+                  pillTone: (incomeChangePct >= 0 ? "positive" : "negative") as
+                    | "positive"
+                    | "negative",
+                }
+              : {})}
           />
           <SummaryCard
             label="Savings Goal Progress"
