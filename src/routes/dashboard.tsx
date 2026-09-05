@@ -59,8 +59,18 @@ function Dashboard() {
     <div className="min-h-screen bg-background">
       <Navbar />
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">Dashboard</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Your money, at a glance.</p>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Dashboard</h1>
+            <p className="mt-1 text-sm text-muted-foreground">Your money, at a glance.</p>
+          </div>
+          <button
+            onClick={() => setOpen(true)}
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-float transition-transform hover:scale-105"
+          >
+            <Plus className="h-4 w-4" /> Add expense
+          </button>
+        </div>
 
         <div className="mt-6 grid gap-6 md:grid-cols-3">
           <SummaryCard
@@ -87,6 +97,16 @@ function Dashboard() {
             pill="On track"
             pillTone="positive"
             progress={68}
+            action={
+              <button
+                type="button"
+                aria-label="Add expense"
+                onClick={() => setOpen(true)}
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-float transition-transform hover:scale-105"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            }
           />
         </div>
 
@@ -119,13 +139,6 @@ function Dashboard() {
           </Card>
         </div>
       </main>
-
-      <button
-        onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-30 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3.5 text-sm font-semibold text-primary-foreground shadow-float transition-transform hover:scale-105"
-      >
-        <Plus className="h-4 w-4" /> Add expense
-      </button>
 
       <AddExpenseModal open={open} onClose={() => setOpen(false)} />
     </div>
