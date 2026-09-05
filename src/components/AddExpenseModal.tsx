@@ -3,7 +3,8 @@ import { useState } from "react";
 import { useSpendLens } from "@/lib/spendlens-data";
 import { cn } from "@/lib/utils";
 
-const PICKS = ["Food & Drink", "Transport", "Shopping", "Bills"];
+const EXPENSE_PICKS = ["Food & Drink", "Transport", "Shopping", "Bills"];
+const INCOME_PICKS = ["Salary", "Freelance", "Investment", "Gift", "Other Income"];
 
 const today = () => {
   const d = new Date();
@@ -12,13 +13,22 @@ const today = () => {
 
 export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { addTransaction } = useSpendLens();
+  const [mode, setMode] = useState<"expense" | "income">("expense");
   const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState(PICKS[0]!);
+  const [category, setCategory] = useState(EXPENSE_PICKS[0]!);
   const [date, setDate] = useState(today());
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
 
   if (!open) return null;
+
+  const isIncome = mode === "income";
+  const picks = isIncome ? INCOME_PICKS : EXPENSE_PICKS;
+
+  const switchMode = (m: "expense" | "income") => {
+    setMode(m);
+    setCategory((m === "income" ? INCOME_PICKS : EXPENSE_PICKS)[0]!);
+  };
 
   const save = () => {
     const n = Number(amount);
@@ -31,10 +41,17 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
       m && d && y
         ? `${y}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`
         : new Date().toISOString().slice(0, 10);
-    addTransaction({ date: iso, category, note: note || "Expense", amount: -n });
+    addTransaction({
+      date: iso,
+      category,
+      note: note || (isIncome ? "Income" : "Expense"),
+      amount: isIncome ? n : -n,
+    });
     setAmount("");
     setNote("");
     setError("");
+    setMode("expense");
+    setCategory(EXPENSE_PICKS[0]!);
     onClose();
   };
 
@@ -42,7 +59,9 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/40 p-4 sm:items-center">
       <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-card sm:p-8">
         <div className="flex items-start justify-between">
-          <h2 className="text-lg font-bold text-foreground">Add Expense</h2>
+          <h2 className="text-lg font-bold text-foreground">
+            {isIncome ? "Add Income" : "Add Expense"}
+          </h2>
           <button
             aria-label="Close"
             onClick={onClose}
@@ -50,6 +69,23 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
           >
             <X className="h-5 w-5" />
           </button>
+        </div>
+
+        <div className="mt-5 grid grid-cols-2 rounded-lg bg-muted p-1">
+          {(["expense", "income"] as const).map((m) => (
+            <button
+              key={m}
+              onClick={() => switchMode(m)}
+              className={cn(
+                "rounded-md py-2 text-sm font-semibold capitalize transition-colors",
+                mode === m
+                  ? "bg-card text-primary shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              {m}
+            </button>
+          ))}
         </div>
 
         <div className="mt-6">
@@ -74,7 +110,7 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
             Category
           </label>
           <div className="mt-2 flex flex-wrap gap-2">
-            {PICKS.map((c) => (
+            {picks.map((c) => (
               <button
                 key={c}
                 onClick={() => setCategory(c)}
@@ -120,7 +156,7 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
           onClick={save}
           className="mt-8 w-full rounded-lg bg-primary py-3 text-sm font-semibold tracking-wide text-primary-foreground transition-opacity hover:opacity-90"
         >
-          Save Expense
+          {isIncome ? "Save Income" : "Save Expense"}
         </button>
       </div>
     </div>

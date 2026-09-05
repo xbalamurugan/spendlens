@@ -24,6 +24,11 @@ export const CATEGORY_COLORS: Record<string, string> = {
   Shopping: "var(--chart-4)",
   Bills: "var(--chart-5)",
   Income: "var(--primary)",
+  Salary: "var(--primary)",
+  Freelance: "var(--primary)",
+  Investment: "var(--primary)",
+  Gift: "var(--primary)",
+  "Other Income": "var(--primary)",
 };
 
 const thisMonth = new Date().toISOString().slice(0, 7); // yyyy-mm
