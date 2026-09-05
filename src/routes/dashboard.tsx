@@ -97,6 +97,16 @@ function Dashboard() {
             pill="On track"
             pillTone="positive"
             progress={68}
+            action={
+              <button
+                type="button"
+                aria-label="Add expense"
+                onClick={() => setOpen(true)}
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-float transition-transform hover:scale-105"
+              >
+                <Plus className="h-4 w-4" />
+              </button>
+            }
           />
         </div>
 
@@ -129,13 +139,6 @@ function Dashboard() {
           </Card>
         </div>
       </main>
-
-      <button
-        onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-30 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3.5 text-sm font-semibold text-primary-foreground shadow-float transition-transform hover:scale-105"
-      >
-        <Plus className="h-4 w-4" /> Add expense
-      </button>
 
       <AddExpenseModal open={open} onClose={() => setOpen(false)} />
     </div>
