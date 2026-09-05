@@ -42,6 +42,7 @@ export function SummaryCard({
   pillTone,
   sub,
   progress,
+  action,
 }: {
   label: string;
   value: string;
@@ -49,10 +50,14 @@ export function SummaryCard({
   pillTone?: "primary" | "positive" | "negative" | undefined;
   sub?: string;
   progress?: number;
+  action?: ReactNode;
 }) {
   return (
     <Card>
-      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
+        {action}
+      </div>
       <div className="mt-3 flex flex-wrap items-center gap-3">
         <span className="text-3xl font-bold tracking-tight text-foreground">{value}</span>
         {pill && <Pill tone={pillTone}>{pill}</Pill>}
