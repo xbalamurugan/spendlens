@@ -117,10 +117,20 @@ function Dashboard() {
           />
           <SummaryCard
             label="Savings Goal Progress"
-            value="68%"
-            pill="On track"
-            pillTone="positive"
-            progress={68}
+            value={`${progressPct}%`}
+            pill={statusPill}
+            pillTone={statusTone}
+            progress={progressPct}
+            sub={`${money(savings)} saved of ${money(savingsGoal)} goal`}
+            action={
+              <button
+                aria-label="Edit savings goal"
+                onClick={() => setGoalOpen(true)}
+                className="rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                <Pencil className="h-4 w-4" />
+              </button>
+            }
           />
         </div>
 
