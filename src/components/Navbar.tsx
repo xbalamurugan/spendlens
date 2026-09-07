@@ -44,7 +44,7 @@ export function Navbar() {
           SpendLens
         </Link>
 
-        <nav className="hidden items-center gap-6 md:flex">
+        <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-6 md:flex">
           {links.map((l) => (
             <Link
               key={l.to}
