@@ -50,7 +50,7 @@ export function SummaryCard({
   label: string;
   value: string;
   pill?: string;
-  pillTone?: "primary" | "positive" | "negative" | undefined;
+  pillTone?: PillTone;
   sub?: string;
   progress?: number;
   action?: ReactNode;
