@@ -5,6 +5,24 @@ import { cn } from "@/lib/utils";
 
 const EXPENSE_PICKS = ["Food & Drink", "Transport", "Shopping", "Bills"];
 const INCOME_PICKS = ["Salary", "Freelance", "Investment", "Gift", "Other Income"];
+const SAVINGS_PICKS = ["Emergency Fund", "Investments", "Goal Deposit", "Other Savings"];
+
+type Mode = "expense" | "income" | "savings";
+const PICKS: Record<Mode, string[]> = {
+  expense: EXPENSE_PICKS,
+  income: INCOME_PICKS,
+  savings: SAVINGS_PICKS,
+};
+const TITLES: Record<Mode, string> = {
+  expense: "Add Expense",
+  income: "Add Income",
+  savings: "Add Savings",
+};
+const BUTTONS: Record<Mode, string> = {
+  expense: "Save Expense",
+  income: "Save Income",
+  savings: "Add Savings",
+};
 
 const today = () => {
   const d = new Date();
@@ -13,7 +31,7 @@ const today = () => {
 
 export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { addTransaction } = useSpendLens();
-  const [mode, setMode] = useState<"expense" | "income">("expense");
+  const [mode, setMode] = useState<Mode>("expense");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState(EXPENSE_PICKS[0]!);
   const [date, setDate] = useState(today());
@@ -23,11 +41,12 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
   if (!open) return null;
 
   const isIncome = mode === "income";
-  const picks = isIncome ? INCOME_PICKS : EXPENSE_PICKS;
+  const isSavingsMode = mode === "savings";
+  const picks = PICKS[mode];
 
-  const switchMode = (m: "expense" | "income") => {
+  const switchMode = (m: Mode) => {
     setMode(m);
-    setCategory((m === "income" ? INCOME_PICKS : EXPENSE_PICKS)[0]!);
+    setCategory(PICKS[m][0]!);
   };
 
   const save = () => {
@@ -44,8 +63,9 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
     addTransaction({
       date: iso,
       category,
-      note: note || (isIncome ? "Income" : "Expense"),
-      amount: isIncome ? n : -n,
+      note: note || (isSavingsMode ? "Savings" : isIncome ? "Income" : "Expense"),
+      amount: isIncome || isSavingsMode ? n : -n,
+      type: mode,
     });
     setAmount("");
     setNote("");
@@ -60,7 +80,7 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
       <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-card sm:p-8">
         <div className="flex items-start justify-between">
           <h2 className="text-lg font-bold text-foreground">
-            {isIncome ? "Add Income" : "Add Expense"}
+            {TITLES[mode]}
           </h2>
           <button
             aria-label="Close"
@@ -71,8 +91,8 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
           </button>
         </div>
 
-        <div className="mt-5 grid grid-cols-2 rounded-lg bg-muted p-1">
-          {(["expense", "income"] as const).map((m) => (
+        <div className="mt-5 grid grid-cols-3 rounded-lg bg-muted p-1">
+          {(["expense", "income", "savings"] as const).map((m) => (
             <button
               key={m}
               onClick={() => switchMode(m)}
@@ -156,7 +176,7 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
           onClick={save}
           className="mt-8 w-full rounded-lg bg-primary py-3 text-sm font-semibold tracking-wide text-primary-foreground transition-opacity hover:opacity-90"
         >
-          {isIncome ? "Save Income" : "Save Expense"}
+          {BUTTONS[mode]}
         </button>
       </div>
     </div>
