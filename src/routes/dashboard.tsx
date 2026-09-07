@@ -29,9 +29,33 @@ export const Route = createFileRoute("/dashboard")({
 
 function Dashboard() {
   const [open, setOpen] = useState(false);
-  const { transactions } = useSpendLens();
+  const [goalOpen, setGoalOpen] = useState(false);
+  const [goalDraft, setGoalDraft] = useState("");
+  const { transactions, savingsGoal, setSavingsGoal } = useSpendLens();
   const total = thisMonthTotal(transactions);
   const income = thisMonthIncome(transactions);
+
+  // Savings goal: actual savings = income - spend, clamped to >= 0.
+  const savings = Math.max(0, income - total);
+  const progressPct = savingsGoal > 0 ? Math.min(100, Math.round((savings / savingsGoal) * 100)) : 0;
+  let statusPill = "Overspending";
+  let statusTone: PillTone = "negative";
+  if (savings > 0 || income > 0) {
+    if (progressPct >= 100) {
+      statusPill = "Goal reached";
+      statusTone = "positive";
+    } else if (progressPct >= 70) {
+      statusPill = "On track";
+      statusTone = "primary";
+    } else {
+      statusPill = "Behind";
+      statusTone = "warning";
+    }
+  }
+
+  useEffect(() => {
+    if (goalOpen) setGoalDraft(String(savingsGoal));
+  }, [goalOpen, savingsGoal]);
   const categories = categoryTotals(transactions);
   const top = categories[0];
   const trend6 = monthlyTotals(transactions, 6);
