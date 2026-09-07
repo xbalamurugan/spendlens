@@ -1,8 +1,9 @@
-import { CATEGORY_COLORS, money, type Txn } from "@/lib/spendlens-data";
+import { CATEGORY_COLORS, isSavings, money, type Txn } from "@/lib/spendlens-data";
 import { cn } from "@/lib/utils";
 
 export function TransactionRow({ txn }: { txn: Txn }) {
-  const income = txn.amount > 0;
+  const savings = isSavings(txn);
+  const income = !savings && txn.amount > 0;
   const date = new Date(`${txn.date}T00:00:00`).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -21,17 +22,17 @@ export function TransactionRow({ txn }: { txn: Txn }) {
             className="h-2 w-2 rounded-full"
             style={{ backgroundColor: CATEGORY_COLORS[txn.category] ?? "var(--chart-3)" }}
           />
-          {txn.category}
+          {savings ? `Savings · ${txn.category}` : txn.category}
         </span>
       </span>
       <span className="col-span-2 text-sm text-muted-foreground sm:col-span-1">{txn.note}</span>
       <span
         className={cn(
           "col-span-2 text-right text-sm font-semibold sm:col-span-1",
-          income ? "text-primary" : "text-destructive",
+          savings ? "text-foreground" : income ? "text-primary" : "text-destructive",
         )}
       >
-        {income ? "+" : "-"}
+        {savings ? "💰 " : income ? "+" : "-"}
         {money(Math.abs(txn.amount))}
       </span>
     </div>

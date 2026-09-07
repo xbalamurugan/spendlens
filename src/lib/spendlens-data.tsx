@@ -5,8 +5,12 @@ export type Txn = {
   date: string; // ISO yyyy-mm-dd
   category: string;
   note: string;
-  amount: number; // negative = expense, positive = income
+  amount: number; // negative = expense, positive = income/savings
+  type?: "expense" | "income" | "savings";
 };
+
+/** True when the entry is a savings deposit (excluded from spend/income totals). */
+export const isSavings = (t: Txn) => t.type === "savings";
 
 export const CATEGORIES = [
   "Food & Drink",
@@ -29,6 +33,10 @@ export const CATEGORY_COLORS: Record<string, string> = {
   Investment: "var(--primary)",
   Gift: "var(--primary)",
   "Other Income": "var(--primary)",
+  "Emergency Fund": "var(--chart-2)",
+  Investments: "var(--chart-2)",
+  "Goal Deposit": "var(--chart-2)",
+  "Other Savings": "var(--chart-2)",
 };
 
 const thisMonth = new Date().toISOString().slice(0, 7); // yyyy-mm
@@ -56,7 +64,7 @@ const seed: Txn[] = [
 export function categoryTotals(txns: Txn[]): { name: string; value: number }[] {
   const map = new Map<string, number>();
   for (const t of txns) {
-    if (t.amount >= 0) continue;
+    if (t.amount >= 0 || isSavings(t)) continue;
     map.set(t.category, (map.get(t.category) ?? 0) + Math.abs(t.amount));
   }
   return [...map.entries()]
@@ -80,7 +88,7 @@ export function monthlyTotals(txns: Txn[], months: number): { month: string; val
   }
   const byKey = new Map(buckets.map((b) => [b.key, b]));
   for (const t of txns) {
-    if (t.amount >= 0) continue;
+    if (t.amount >= 0 || isSavings(t)) continue;
     const b = byKey.get(t.date.slice(0, 7));
     if (b) b.value += Math.abs(t.amount);
   }
@@ -92,7 +100,7 @@ export function thisMonthTotal(txns: Txn[]): number {
   const key = new Date().toISOString().slice(0, 7);
   return Math.round(
     txns
-      .filter((t) => t.amount < 0 && t.date.startsWith(key))
+      .filter((t) => t.amount < 0 && !isSavings(t) && t.date.startsWith(key))
       .reduce((s, t) => s + Math.abs(t.amount), 0) * 100,
   ) / 100;
 }
@@ -102,7 +110,7 @@ export function thisMonthIncome(txns: Txn[]): number {
   const key = new Date().toISOString().slice(0, 7);
   return Math.round(
     txns
-      .filter((t) => t.amount > 0 && t.date.startsWith(key))
+      .filter((t) => t.amount > 0 && !isSavings(t) && t.date.startsWith(key))
       .reduce((s, t) => s + t.amount, 0) * 100,
   ) / 100;
 }
@@ -111,8 +119,18 @@ export function thisMonthIncome(txns: Txn[]): number {
 export function monthIncome(txns: Txn[], monthKey: string): number {
   return Math.round(
     txns
-      .filter((t) => t.amount > 0 && t.date.startsWith(monthKey))
+      .filter((t) => t.amount > 0 && !isSavings(t) && t.date.startsWith(monthKey))
       .reduce((s, t) => s + t.amount, 0) * 100,
+  ) / 100;
+}
+
+/** Total savings deposits in the current calendar month. */
+export function thisMonthSavings(txns: Txn[]): number {
+  const key = new Date().toISOString().slice(0, 7);
+  return Math.round(
+    txns
+      .filter((t) => isSavings(t) && t.date.startsWith(key))
+      .reduce((s, t) => s + Math.abs(t.amount), 0) * 100,
   ) / 100;
 }
 
