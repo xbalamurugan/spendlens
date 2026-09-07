@@ -40,7 +40,7 @@ function Dashboard() {
   const progressPct = savingsGoal > 0 ? Math.min(100, Math.round((savings / savingsGoal) * 100)) : 0;
   let statusPill = "Overspending";
   let statusTone: PillTone = "negative";
-  if (savings > 0 || income > 0) {
+  if (savings > 0) {
     if (progressPct >= 100) {
       statusPill = "Goal reached";
       statusTone = "positive";
