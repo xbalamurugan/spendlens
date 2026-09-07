@@ -128,12 +128,15 @@ type Ctx = {
   transactions: Txn[];
   addTransaction: (t: Omit<Txn, "id">) => void;
   clearAllTransactions: () => void;
+  savingsGoal: number;
+  setSavingsGoal: (n: number) => void;
 };
 
 const SpendLensContext = createContext<Ctx | null>(null);
 
 export function SpendLensProvider({ children }: { children: ReactNode }) {
   const [transactions, setTransactions] = useState<Txn[]>(seed);
+  const [savingsGoal, setSavingsGoal] = useState(5000);
 
   const value = useMemo<Ctx>(
     () => ({
@@ -143,8 +146,10 @@ export function SpendLensProvider({ children }: { children: ReactNode }) {
           [{ ...t, id: crypto.randomUUID() }, ...prev].sort((a, b) => b.date.localeCompare(a.date)),
         ),
       clearAllTransactions: () => setTransactions([]),
+      savingsGoal,
+      setSavingsGoal,
     }),
-    [transactions],
+    [transactions, savingsGoal],
   );
 
   return <SpendLensContext.Provider value={value}>{children}</SpendLensContext.Provider>;

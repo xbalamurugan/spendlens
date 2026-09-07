@@ -31,6 +31,8 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --color-rust: var(--rust);
   --color-border: var(--border);
   --color-input: var(--input);
@@ -70,6 +72,9 @@
   --destructive-foreground: oklch(1 0 0);
   --success: oklch(0.63 0.16 155);
   --success-foreground: oklch(1 0 0);
+  /* amber */
+  --warning: oklch(0.66 0.14 65);
+  --warning-foreground: oklch(1 0 0);
   /* deep orange / rust */
   --rust: oklch(0.588 0.166 44);
   /* #E5E7EB */

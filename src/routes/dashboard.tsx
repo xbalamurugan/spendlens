@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Plus } from "lucide-react";
-import { useState } from "react";
+import { Pencil, Plus, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { AddExpenseModal } from "@/components/AddExpenseModal";
 import { DonutChart } from "@/components/DonutChart";
 import { Navbar } from "@/components/Navbar";
-import { Card, SummaryCard } from "@/components/SummaryCard";
+import { Card, SummaryCard, type PillTone } from "@/components/SummaryCard";
 import { TrendChart } from "@/components/TrendChart";
 import { categoryTotals, money, monthlyTotals, thisMonthIncome, thisMonthTotal, useSpendLens } from "@/lib/spendlens-data";
 
@@ -29,9 +29,33 @@ export const Route = createFileRoute("/dashboard")({
 
 function Dashboard() {
   const [open, setOpen] = useState(false);
-  const { transactions } = useSpendLens();
+  const [goalOpen, setGoalOpen] = useState(false);
+  const [goalDraft, setGoalDraft] = useState("");
+  const { transactions, savingsGoal, setSavingsGoal } = useSpendLens();
   const total = thisMonthTotal(transactions);
   const income = thisMonthIncome(transactions);
+
+  // Savings goal: actual savings = income - spend, clamped to >= 0.
+  const savings = Math.max(0, income - total);
+  const progressPct = savingsGoal > 0 ? Math.min(100, Math.round((savings / savingsGoal) * 100)) : 0;
+  let statusPill = "Overspending";
+  let statusTone: PillTone = "negative";
+  if (savings > 0) {
+    if (progressPct >= 100) {
+      statusPill = "Goal reached";
+      statusTone = "positive";
+    } else if (progressPct >= 70) {
+      statusPill = "On track";
+      statusTone = "primary";
+    } else {
+      statusPill = "Behind";
+      statusTone = "warning";
+    }
+  }
+
+  useEffect(() => {
+    if (goalOpen) setGoalDraft(String(savingsGoal));
+  }, [goalOpen, savingsGoal]);
   const categories = categoryTotals(transactions);
   const top = categories[0];
   const trend6 = monthlyTotals(transactions, 6);
@@ -93,10 +117,20 @@ function Dashboard() {
           />
           <SummaryCard
             label="Savings Goal Progress"
-            value="68%"
-            pill="On track"
-            pillTone="positive"
-            progress={68}
+            value={`${progressPct}%`}
+            pill={statusPill}
+            pillTone={statusTone}
+            progress={progressPct}
+            sub={`${money(savings)} saved of ${money(savingsGoal)} goal`}
+            action={
+              <button
+                aria-label="Edit savings goal"
+                onClick={() => setGoalOpen(true)}
+                className="rounded-full p-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                <Pencil className="h-4 w-4" />
+              </button>
+            }
           />
         </div>
 
@@ -131,6 +165,64 @@ function Dashboard() {
       </main>
 
       <AddExpenseModal open={open} onClose={() => setOpen(false)} />
+
+      {goalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 p-4"
+          onClick={() => setGoalOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Edit savings goal"
+            className="w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-float"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-foreground">Savings Goal</h2>
+              <button
+                aria-label="Close"
+                onClick={() => setGoalOpen(false)}
+                className="rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Set your monthly savings target.
+            </p>
+            <form
+              className="mt-5"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const n = Number(goalDraft);
+                if (Number.isFinite(n) && n > 0) setSavingsGoal(n);
+                setGoalOpen(false);
+              }}
+            >
+              <label className="flex items-center gap-2 border-b-2 border-border pb-2 focus-within:border-primary">
+                <span className="text-2xl font-bold text-muted-foreground">₹</span>
+                <input
+                  type="number"
+                  min="1"
+                  step="any"
+                  value={goalDraft}
+                  onChange={(e) => setGoalDraft(e.target.value)}
+                  autoFocus
+                  className="w-full bg-transparent text-2xl font-bold tracking-tight text-foreground outline-none placeholder:text-muted-foreground/60"
+                  placeholder="5,000"
+                />
+              </label>
+              <button
+                type="submit"
+                className="mt-6 w-full rounded-lg bg-primary px-4 py-3 text-sm font-semibold uppercase tracking-wide text-primary-foreground transition-opacity hover:opacity-90"
+              >
+                Save Goal
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
