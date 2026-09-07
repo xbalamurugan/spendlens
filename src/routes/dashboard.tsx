@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Plus } from "lucide-react";
-import { useState } from "react";
+import { Pencil, Plus, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { AddExpenseModal } from "@/components/AddExpenseModal";
 import { DonutChart } from "@/components/DonutChart";
 import { Navbar } from "@/components/Navbar";
-import { Card, SummaryCard } from "@/components/SummaryCard";
+import { Card, SummaryCard, type PillTone } from "@/components/SummaryCard";
 import { TrendChart } from "@/components/TrendChart";
 import { categoryTotals, money, monthlyTotals, thisMonthIncome, thisMonthTotal, useSpendLens } from "@/lib/spendlens-data";
 
