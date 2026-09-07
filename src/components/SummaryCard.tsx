@@ -14,12 +14,14 @@ export function Card({ className, children }: { className?: string; children: Re
   );
 }
 
+export type PillTone = "primary" | "positive" | "negative" | "warning" | undefined;
+
 export function Pill({
   children,
   tone = "primary",
 }: {
   children: ReactNode;
-  tone?: "primary" | "positive" | "negative" | undefined;
+  tone?: PillTone;
 }) {
   return (
     <span
@@ -28,6 +30,7 @@ export function Pill({
         tone === "primary" && "bg-primary-soft text-primary",
         tone === "positive" && "bg-success/12 text-success",
         tone === "negative" && "bg-destructive/12 text-destructive",
+        tone === "warning" && "bg-warning/15 text-warning",
       )}
     >
       {children}
