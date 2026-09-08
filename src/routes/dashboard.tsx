@@ -38,8 +38,12 @@ function Dashboard() {
   // Savings goal: total saved = sum of Savings-type entries this month.
   const savings = thisMonthSavings(transactions);
   const progressPct = savingsGoal > 0 ? Math.min(100, Math.round((savings / savingsGoal) * 100)) : 0;
-  let statusPill = "Overspending";
-  let statusTone: PillTone = "negative";
+  let statusPill = "Behind";
+  let statusTone: PillTone = "warning";
+  if (income - total < 0) {
+    statusPill = "Overspending";
+    statusTone = "negative";
+  }
   if (savings > 0) {
     if (progressPct >= 100) {
       statusPill = "Goal reached";
