@@ -105,13 +105,15 @@ export function Navbar() {
                       </p>
                     </div>
                     <span
-                      className={`shrink-0 text-sm font-semibold ${
+                      title={money(Math.abs(t.amount))}
+                      className={`max-w-[45%] shrink-0 truncate text-sm font-semibold ${
                         t.amount < 0 ? "text-destructive" : "text-primary"
                       }`}
                     >
                       {t.amount < 0 ? "-" : "+"}
-                      {money(Math.abs(t.amount))}
+                      {compactMoney(Math.abs(t.amount))}
                     </span>
+
                   </li>
                 ))}
                 {recent.length === 0 && (
