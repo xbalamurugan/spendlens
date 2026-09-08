@@ -125,7 +125,6 @@ function Dashboard() {
             pill={statusPill}
             pillTone={statusTone}
             progress={progressPct}
-            sub={`${money(savings)} saved of ${money(savingsGoal)} goal`}
             action={
               <button
                 aria-label="Edit savings goal"
