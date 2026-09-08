@@ -135,7 +135,9 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
             <input
               inputMode="decimal"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => onAmountChange(e.target.value)}
+              maxLength={12}
+
               placeholder="0.00"
               className="w-full bg-transparent text-3xl font-bold text-foreground outline-none placeholder:text-muted-foreground/50"
             />
