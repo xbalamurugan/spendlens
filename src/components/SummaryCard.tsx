@@ -62,9 +62,15 @@ export function SummaryCard({
         {action}
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-3">
-        <span className="text-3xl font-bold tracking-tight text-foreground">{value}</span>
+        <span
+          title={value}
+          className="max-w-full truncate text-2xl font-bold tracking-tight text-foreground sm:text-3xl"
+        >
+          {value}
+        </span>
         {pill && <Pill tone={pillTone}>{pill}</Pill>}
       </div>
+
       {sub && <p className="mt-2 text-sm text-muted-foreground">{sub}</p>}
       {progress !== undefined && (
         <div className="mt-4 h-2 w-full overflow-hidden rounded-full bg-muted">
