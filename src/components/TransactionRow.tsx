@@ -1,4 +1,4 @@
-import { CATEGORY_COLORS, isSavings, money, type Txn } from "@/lib/spendlens-data";
+import { CATEGORY_COLORS, compactMoney, isSavings, money, type Txn } from "@/lib/spendlens-data";
 import { cn } from "@/lib/utils";
 
 export function TransactionRow({ txn }: { txn: Txn }) {
@@ -27,14 +27,16 @@ export function TransactionRow({ txn }: { txn: Txn }) {
       </span>
       <span className="col-span-2 text-sm text-muted-foreground sm:col-span-1">{txn.note}</span>
       <span
+        title={money(Math.abs(txn.amount))}
         className={cn(
-          "col-span-2 text-right text-sm font-semibold sm:col-span-1",
+          "col-span-2 max-w-full truncate text-right text-sm font-semibold sm:col-span-1",
           savings ? "text-foreground" : income ? "text-primary" : "text-destructive",
         )}
       >
         {savings ? "💰 " : income ? "+" : "-"}
-        {money(Math.abs(txn.amount))}
+        {compactMoney(Math.abs(txn.amount))}
       </span>
+
     </div>
   );
 }

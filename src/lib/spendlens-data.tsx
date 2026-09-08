@@ -142,6 +142,21 @@ export const money = (n: number) =>
     maximumFractionDigits: 2,
   });
 
+/** Largest amount a single entry may have. */
+export const MAX_AMOUNT = 99999999;
+
+const trim = (n: number) => (Math.round(n * 10) / 10).toString();
+
+/** Overflow-safe currency: abbreviates large values (₹1.2Cr, ₹12L). */
+export const compactMoney = (n: number) => {
+  const abs = Math.abs(n);
+  const sign = n < 0 ? "-" : "";
+  if (abs >= 1e7) return `${sign}₹${trim(abs / 1e7)}Cr`;
+  if (abs >= 1e5) return `${sign}₹${trim(abs / 1e5)}L`;
+  return money(n);
+};
+
+
 type Ctx = {
   transactions: Txn[];
   addTransaction: (t: Omit<Txn, "id">) => void;

@@ -6,7 +6,7 @@ import { DonutChart } from "@/components/DonutChart";
 import { Navbar } from "@/components/Navbar";
 import { Card, SummaryCard, type PillTone } from "@/components/SummaryCard";
 import { TrendChart } from "@/components/TrendChart";
-import { categoryTotals, money, monthlyTotals, thisMonthIncome, thisMonthSavings, thisMonthTotal, useSpendLens } from "@/lib/spendlens-data";
+import { categoryTotals, compactMoney, monthlyTotals, thisMonthIncome, thisMonthSavings, thisMonthTotal, useSpendLens } from "@/lib/spendlens-data";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -103,13 +103,14 @@ function Dashboard() {
         <div className="mt-6 grid gap-6 md:grid-cols-3">
           <SummaryCard
             label="Total Spent This Month"
-            value={money(total)}
+            value={compactMoney(total)}
             pill={`${changePct >= 0 ? "+" : ""}${changePct}%`}
             pillTone={changePct > 0 ? "negative" : "positive"}
           />
           <SummaryCard
             label="Total Income This Month"
-            value={money(income)}
+            value={compactMoney(income)}
+
             {...(income > 0
               ? {
                   pill: `${incomeChangePct >= 0 ? "+" : ""}${incomeChangePct}%`,

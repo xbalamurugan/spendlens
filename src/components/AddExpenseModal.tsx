@@ -1,7 +1,8 @@
 import { X } from "lucide-react";
 import { useState } from "react";
-import { useSpendLens } from "@/lib/spendlens-data";
+import { MAX_AMOUNT, money, useSpendLens } from "@/lib/spendlens-data";
 import { cn } from "@/lib/utils";
+
 
 const EXPENSE_PICKS = ["Food & Drink", "Transport", "Shopping", "Bills"];
 const INCOME_PICKS = ["Salary", "Freelance", "Investment", "Gift", "Other Income"];
@@ -49,12 +50,29 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
     setCategory(PICKS[m][0]!);
   };
 
+  const onAmountChange = (raw: string) => {
+    const cleaned = raw.replace(/[^0-9.]/g, "").replace(/(\..*)\./g, "$1");
+    const [whole = "", frac] = cleaned.split(".");
+    const next = frac === undefined ? whole : `${whole}.${frac.slice(0, 2)}`;
+    if (next !== "" && Number(next) > MAX_AMOUNT) {
+      setError(`Amount can't exceed ${money(MAX_AMOUNT)}`);
+      return;
+    }
+    setError("");
+    setAmount(next);
+  };
+
   const save = () => {
     const n = Number(amount);
     if (!amount || Number.isNaN(n) || n <= 0) {
       setError("Enter an amount greater than 0");
       return;
     }
+    if (n > MAX_AMOUNT) {
+      setError(`Amount can't exceed ${money(MAX_AMOUNT)}`);
+      return;
+    }
+
     const [m, d, y] = date.split("/");
     const iso =
       m && d && y
@@ -117,7 +135,9 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
             <input
               inputMode="decimal"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => onAmountChange(e.target.value)}
+              maxLength={12}
+
               placeholder="0.00"
               className="w-full bg-transparent text-3xl font-bold text-foreground outline-none placeholder:text-muted-foreground/50"
             />
