@@ -6,7 +6,7 @@ import { DonutChart } from "@/components/DonutChart";
 import { Navbar } from "@/components/Navbar";
 import { Card, SummaryCard, type PillTone } from "@/components/SummaryCard";
 import { TrendChart } from "@/components/TrendChart";
-import { categoryTotals, money, monthlyTotals, thisMonthIncome, thisMonthTotal, useSpendLens } from "@/lib/spendlens-data";
+import { categoryTotals, money, monthlyTotals, thisMonthIncome, thisMonthSavings, thisMonthTotal, useSpendLens } from "@/lib/spendlens-data";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -35,8 +35,8 @@ function Dashboard() {
   const total = thisMonthTotal(transactions);
   const income = thisMonthIncome(transactions);
 
-  // Savings goal: actual savings = income - spend, clamped to >= 0.
-  const savings = Math.max(0, income - total);
+  // Savings goal: total saved = sum of Savings-type entries this month.
+  const savings = thisMonthSavings(transactions);
   const progressPct = savingsGoal > 0 ? Math.min(100, Math.round((savings / savingsGoal) * 100)) : 0;
   let statusPill = "Overspending";
   let statusTone: PillTone = "negative";
