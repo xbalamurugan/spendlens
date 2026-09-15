@@ -36,6 +36,7 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
   const [mode, setMode] = useState<Mode>("expense");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState(EXPENSE_PICKS[0]!);
+  const [customCategory, setCustomCategory] = useState("");
   const [date, setDate] = useState(today());
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
@@ -49,6 +50,8 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
   const switchMode = (m: Mode) => {
     setMode(m);
     setCategory(PICKS[m][0]!);
+    setCustomCategory("");
+    setError("");
   };
 
   const onAmountChange = (raw: string) => {
