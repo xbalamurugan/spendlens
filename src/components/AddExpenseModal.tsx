@@ -77,6 +77,13 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
       return;
     }
 
+    const finalCategory =
+      category === OTHER ? customCategory.trim().slice(0, 40) : category;
+    if (!finalCategory) {
+      setError("Enter a category name");
+      return;
+    }
+
     const [m, d, y] = date.split("/");
     const iso =
       m && d && y
