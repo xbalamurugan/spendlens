@@ -4,9 +4,10 @@ import { MAX_AMOUNT, money, useSpendLens } from "@/lib/spendlens-data";
 import { cn } from "@/lib/utils";
 
 
-const EXPENSE_PICKS = ["Food & Drink", "Transport", "Shopping", "Bills"];
-const INCOME_PICKS = ["Salary", "Freelance", "Investment", "Gift", "Other Income"];
-const SAVINGS_PICKS = ["Emergency Fund", "Investments", "Goal Deposit", "Other Savings"];
+const EXPENSE_PICKS = ["Food & Drink", "Transport", "Shopping", "Bills", "Other"];
+const INCOME_PICKS = ["Salary", "Freelance", "Investment", "Gift", "Other"];
+const SAVINGS_PICKS = ["Emergency Fund", "Investments", "Goal Deposit", "Other"];
+const OTHER = "Other";
 
 type Mode = "expense" | "income" | "savings";
 const PICKS: Record<Mode, string[]> = {
@@ -35,6 +36,7 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
   const [mode, setMode] = useState<Mode>("expense");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState(EXPENSE_PICKS[0]!);
+  const [customCategory, setCustomCategory] = useState("");
   const [date, setDate] = useState(today());
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
@@ -48,6 +50,8 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
   const switchMode = (m: Mode) => {
     setMode(m);
     setCategory(PICKS[m][0]!);
+    setCustomCategory("");
+    setError("");
   };
 
   const onAmountChange = (raw: string) => {
@@ -73,6 +77,13 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
       return;
     }
 
+    const finalCategory =
+      category === OTHER ? customCategory.trim().slice(0, 40) : category;
+    if (!finalCategory) {
+      setError("Enter a category name");
+      return;
+    }
+
     const [m, d, y] = date.split("/");
     const iso =
       m && d && y
@@ -80,7 +91,7 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
         : new Date().toISOString().slice(0, 10);
     addTransaction({
       date: iso,
-      category,
+      category: finalCategory,
       note: note || (isSavingsMode ? "Savings" : isIncome ? "Income" : "Expense"),
       amount: isIncome || isSavingsMode ? n : -n,
       type: mode,
@@ -90,6 +101,7 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
     setError("");
     setMode("expense");
     setCategory(EXPENSE_PICKS[0]!);
+    setCustomCategory("");
     onClose();
   };
 
@@ -161,10 +173,20 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
                     : "border-border text-muted-foreground hover:border-primary hover:text-primary",
                 )}
               >
-                {c}
+                {c === OTHER ? "Other (custom)" : c}
               </button>
             ))}
           </div>
+          {category === OTHER && (
+            <input
+              value={customCategory}
+              onChange={(e) => setCustomCategory(e.target.value)}
+              maxLength={40}
+              placeholder="Type your category name"
+              autoFocus
+              className="mt-3 w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
+            />
+          )}
         </div>
 
         <div className="mt-6 grid gap-4">
