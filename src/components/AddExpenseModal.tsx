@@ -173,10 +173,20 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
                     : "border-border text-muted-foreground hover:border-primary hover:text-primary",
                 )}
               >
-                {c}
+                {c === OTHER ? "Other (custom)" : c}
               </button>
             ))}
           </div>
+          {category === OTHER && (
+            <input
+              value={customCategory}
+              onChange={(e) => setCustomCategory(e.target.value)}
+              maxLength={40}
+              placeholder="Type your category name"
+              autoFocus
+              className="mt-3 w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
+            />
+          )}
         </div>
 
         <div className="mt-6 grid gap-4">
