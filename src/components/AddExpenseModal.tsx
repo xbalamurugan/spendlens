@@ -4,9 +4,10 @@ import { MAX_AMOUNT, money, useSpendLens } from "@/lib/spendlens-data";
 import { cn } from "@/lib/utils";
 
 
-const EXPENSE_PICKS = ["Food & Drink", "Transport", "Shopping", "Bills"];
-const INCOME_PICKS = ["Salary", "Freelance", "Investment", "Gift", "Other Income"];
-const SAVINGS_PICKS = ["Emergency Fund", "Investments", "Goal Deposit", "Other Savings"];
+const EXPENSE_PICKS = ["Food & Drink", "Transport", "Shopping", "Bills", "Other"];
+const INCOME_PICKS = ["Salary", "Freelance", "Investment", "Gift", "Other"];
+const SAVINGS_PICKS = ["Emergency Fund", "Investments", "Goal Deposit", "Other"];
+const OTHER = "Other";
 
 type Mode = "expense" | "income" | "savings";
 const PICKS: Record<Mode, string[]> = {
