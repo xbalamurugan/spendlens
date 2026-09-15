@@ -91,7 +91,7 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
         : new Date().toISOString().slice(0, 10);
     addTransaction({
       date: iso,
-      category,
+      category: finalCategory,
       note: note || (isSavingsMode ? "Savings" : isIncome ? "Income" : "Expense"),
       amount: isIncome || isSavingsMode ? n : -n,
       type: mode,
@@ -101,6 +101,7 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
     setError("");
     setMode("expense");
     setCategory(EXPENSE_PICKS[0]!);
+    setCustomCategory("");
     onClose();
   };
 
