@@ -1,4 +1,14 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+
+const GOAL_STORAGE_KEY = "spendlens:savings-goal";
+const DEFAULT_GOAL = 5000;
+
+function readStoredGoal(): number {
+  if (typeof window === "undefined") return DEFAULT_GOAL;
+  const raw = window.localStorage.getItem(GOAL_STORAGE_KEY);
+  const n = raw === null ? NaN : Number(raw);
+  return Number.isFinite(n) && n > 0 ? n : DEFAULT_GOAL;
+}
 
 export type Txn = {
   id: string;
@@ -169,7 +179,16 @@ const SpendLensContext = createContext<Ctx | null>(null);
 
 export function SpendLensProvider({ children }: { children: ReactNode }) {
   const [transactions, setTransactions] = useState<Txn[]>(seed);
-  const [savingsGoal, setSavingsGoal] = useState(5000);
+  const [savingsGoal, setSavingsGoal] = useState(DEFAULT_GOAL);
+
+  // Load persisted goal after hydration (SSR-safe) and save on change.
+  useEffect(() => {
+    setSavingsGoal(readStoredGoal());
+  }, []);
+  useEffect(() => {
+    window.localStorage.setItem(GOAL_STORAGE_KEY, String(savingsGoal));
+  }, [savingsGoal]);
+
 
   const value = useMemo<Ctx>(
     () => ({
