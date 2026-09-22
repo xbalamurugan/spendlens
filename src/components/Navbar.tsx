@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Bell, LogOut, Menu, Settings, UserRound, X } from "lucide-react";
+import { Bell, LogOut, Menu, UserRound, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { compactMoney, money, useSpendLens } from "@/lib/spendlens-data";
 
