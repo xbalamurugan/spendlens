@@ -1,14 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-
-const GOAL_STORAGE_KEY = "spendlens:savings-goal";
-const DEFAULT_GOAL = 5000;
-
-function readStoredGoal(): number {
-  if (typeof window === "undefined") return DEFAULT_GOAL;
-  const raw = window.localStorage.getItem(GOAL_STORAGE_KEY);
-  const n = raw === null ? NaN : Number(raw);
-  return Number.isFinite(n) && n > 0 ? n : DEFAULT_GOAL;
-}
+import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
 
 export type Txn = {
   id: string;
