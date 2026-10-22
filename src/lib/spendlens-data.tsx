@@ -169,16 +169,9 @@ const SpendLensContext = createContext<Ctx | null>(null);
 
 export function SpendLensProvider({ children }: { children: ReactNode }) {
   const [transactions, setTransactions] = useState<Txn[]>(seed);
-  const [savingsGoal, setSavingsGoalState] = useState(DEFAULT_GOAL);
+  const [savingsGoal, setSavingsGoalState] = useState(5000);
 
-  // Load persisted goal after hydration (SSR-safe); writes happen in setSavingsGoal.
-  useEffect(() => {
-    setSavingsGoalState(readStoredGoal());
-  }, []);
-  const setSavingsGoal = (n: number) => {
-    setSavingsGoalState(n);
-    window.localStorage.setItem(GOAL_STORAGE_KEY, String(n));
-  };
+  const setSavingsGoal = (n: number) => setSavingsGoalState(n);
 
 
 

@@ -136,14 +136,6 @@ export function Navbar() {
                   <p className="truncate text-xs text-muted-foreground">guest@spendlens.app</p>
                 </div>
               </div>
-              <Link
-                to="/settings"
-                onClick={() => setPanel(null)}
-                className="flex w-full items-center gap-2 px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              >
-                <Settings className="h-4 w-4" />
-                Settings
-              </Link>
               <button
                 onClick={() => {
                   setPanel(null);
