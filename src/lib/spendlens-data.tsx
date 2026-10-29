@@ -160,6 +160,7 @@ export const compactMoney = (n: number) => {
 type Ctx = {
   transactions: Txn[];
   addTransaction: (t: Omit<Txn, "id">) => void;
+  deleteTransaction: (id: string) => void;
   clearAllTransactions: () => void;
   savingsGoal: number;
   setSavingsGoal: (n: number) => void;
@@ -182,6 +183,8 @@ export function SpendLensProvider({ children }: { children: ReactNode }) {
         setTransactions((prev) =>
           [{ ...t, id: crypto.randomUUID() }, ...prev].sort((a, b) => b.date.localeCompare(a.date)),
         ),
+      deleteTransaction: (id: string) =>
+        setTransactions((prev) => prev.filter((t) => t.id !== id)),
       clearAllTransactions: () => setTransactions([]),
       savingsGoal,
       setSavingsGoal,

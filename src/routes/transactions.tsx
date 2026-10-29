@@ -12,10 +12,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { Navbar } from "@/components/Navbar";
 import { Card } from "@/components/SummaryCard";
 import { TransactionRow } from "@/components/TransactionRow";
-import { CATEGORIES, useSpendLens } from "@/lib/spendlens-data";
+import { CATEGORIES, money, useSpendLens, type Txn } from "@/lib/spendlens-data";
 
 export const Route = createFileRoute("/transactions")({
   head: () => ({
@@ -54,10 +55,25 @@ function withinRange(isoDate: string, range: RangeId) {
 }
 
 function Transactions() {
-  const { transactions, clearAllTransactions } = useSpendLens();
+  const { transactions, clearAllTransactions, deleteTransaction } = useSpendLens();
   const [category, setCategory] = useState("All Categories");
   const [range, setRange] = useState<RangeId>("all");
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [txnToDelete, setTxnToDelete] = useState<Txn | null>(null);
+
+  const formatDate = (iso: string) =>
+    new Date(`${iso}T00:00:00`).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+
+  const handleDeleteOne = () => {
+    if (!txnToDelete) return;
+    deleteTransaction(txnToDelete.id);
+    setTxnToDelete(null);
+    toast.success("Transaction deleted");
+  };
 
   const filtered = useMemo(
     () =>
@@ -141,19 +157,24 @@ function Transactions() {
         </div>
 
         <Card className="mt-6 p-2 sm:p-4">
-          <div className="hidden grid-cols-[120px_150px_1fr_120px] gap-3 border-b border-border px-2 pb-3 pt-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground sm:grid">
+          <div className="hidden grid-cols-[120px_150px_1fr_120px_32px] gap-3 border-b border-border px-2 pb-3 pt-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground sm:grid">
             <span>Date</span>
             <span>Category</span>
             <span>Note</span>
             <span className="text-right">Amount</span>
+            <span />
           </div>
 
           {filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
               <Inbox className="h-8 w-8 text-muted-foreground" />
-              <p className="text-sm font-medium text-foreground">No transactions match your filters</p>
+              <p className="text-sm font-medium text-foreground">
+                {isFiltered ? "No transactions match your filters" : "No transactions found."}
+              </p>
               <p className="text-sm text-muted-foreground">
-                Try a different category or clear the filters.
+                {isFiltered
+                  ? "Try a different category or clear the filters."
+                  : "Add an expense from the Dashboard to get started."}
               </p>
               {isFiltered && (
                 <button
@@ -165,7 +186,11 @@ function Transactions() {
               )}
             </div>
           ) : (
-            filtered.map((t) => <TransactionRow key={t.id} txn={t} />)
+            <TooltipProvider delayDuration={200}>
+              {filtered.map((t) => (
+                <TransactionRow key={t.id} txn={t} onDelete={() => setTxnToDelete(t)} />
+              ))}
+            </TooltipProvider>
           )}
         </Card>
       </main>
@@ -185,6 +210,34 @@ function Transactions() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={txnToDelete !== null}
+        onOpenChange={(open) => {
+          if (!open) setTxnToDelete(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this transaction?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {txnToDelete &&
+                `${txnToDelete.note} - ${txnToDelete.category} - ${money(
+                  Math.abs(txnToDelete.amount),
+                )} on ${formatDate(txnToDelete.date)}. This cannot be undone.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>No</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteOne}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Yes, delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
