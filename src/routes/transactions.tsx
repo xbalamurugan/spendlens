@@ -12,10 +12,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { Navbar } from "@/components/Navbar";
 import { Card } from "@/components/SummaryCard";
 import { TransactionRow } from "@/components/TransactionRow";
-import { CATEGORIES, useSpendLens } from "@/lib/spendlens-data";
+import { CATEGORIES, money, useSpendLens, type Txn } from "@/lib/spendlens-data";
 
 export const Route = createFileRoute("/transactions")({
   head: () => ({
