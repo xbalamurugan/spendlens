@@ -37,6 +37,7 @@ export function TransactionRow({ txn, onDelete }: { txn: Txn; onDelete?: () => v
               className={cn(
                 "group flex h-8 w-8 shrink-0 items-center justify-center rounded-full",
                 "text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive",
+                "sm:order-last",
               )}
             >
               <X size={16} aria-hidden="true" />
