@@ -161,6 +161,7 @@ type Ctx = {
   transactions: Txn[];
   addTransaction: (t: Omit<Txn, "id">) => void;
   deleteTransaction: (id: string) => void;
+  deleteTransactions: (ids: string[]) => void;
   clearAllTransactions: () => void;
   savingsGoal: number;
   setSavingsGoal: (n: number) => void;
