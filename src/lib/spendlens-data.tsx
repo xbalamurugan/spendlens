@@ -186,6 +186,10 @@ export function SpendLensProvider({ children }: { children: ReactNode }) {
         ),
       deleteTransaction: (id: string) =>
         setTransactions((prev) => prev.filter((t) => t.id !== id)),
+      deleteTransactions: (ids: string[]) => {
+        const kill = new Set(ids);
+        setTransactions((prev) => prev.filter((t) => !kill.has(t.id)));
+      },
       clearAllTransactions: () => setTransactions([]),
       savingsGoal,
       setSavingsGoal,
