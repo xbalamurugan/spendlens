@@ -212,9 +212,9 @@ export function SpendLensProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Every change persists immediately so deletions survive a page refresh.
-  const setTransactions = (updater: (prev: Txn[]) => Txn[]) =>
+  const setTransactions = (updater: Txn[] | ((prev: Txn[]) => Txn[])) =>
     setTransactionsState((prev) => {
-      const next = updater(prev);
+      const next = typeof updater === "function" ? updater(prev) : updater;
       try {
         window.localStorage.setItem(TXN_STORAGE_KEY, JSON.stringify(next));
       } catch {
