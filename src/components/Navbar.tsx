@@ -2,7 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Bell, LogOut, Menu, UserRound, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { compactMoney, money, useSpendSense } from "@/lib/spendsense-data";
-
+import logoAsset from "@/assets/spendsense-logo.png.asset.json";
 const links = [
   { to: "/dashboard", label: "Dashboard" },
   { to: "/transactions", label: "Transactions" },
