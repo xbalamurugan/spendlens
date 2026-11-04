@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 import { useState } from "react";
-import { MAX_AMOUNT, money, useSpendLens } from "@/lib/spendlens-data";
+import { MAX_AMOUNT, money, useSpendSense } from "@/lib/spendsense-data";
 import { cn } from "@/lib/utils";
 
 
@@ -32,7 +32,7 @@ const today = () => {
 };
 
 export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { addTransaction } = useSpendLens();
+  const { addTransaction } = useSpendSense();
   const [mode, setMode] = useState<Mode>("expense");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState(EXPENSE_PICKS[0]!);

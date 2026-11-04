@@ -16,18 +16,18 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Navbar } from "@/components/Navbar";
 import { Card } from "@/components/SummaryCard";
 import { TransactionRow } from "@/components/TransactionRow";
-import { CATEGORIES, money, useSpendLens, type Txn } from "@/lib/spendlens-data";
+import { CATEGORIES, money, useSpendSense, type Txn } from "@/lib/spendsense-data";
 
 export const Route = createFileRoute("/transactions")({
   head: () => ({
     meta: [
-      { title: "Transactions — SpendLens" },
+      { title: "Transactions — SpendSense" },
       {
         name: "description",
         content:
-          "Browse and filter every expense and income entry by date range and category in your SpendLens ledger.",
+          "Browse and filter every expense and income entry by date range and category in your SpendSense ledger.",
       },
-      { property: "og:title", content: "Transactions — SpendLens" },
+      { property: "og:title", content: "Transactions — SpendSense" },
       {
         property: "og:description",
         content: "Browse and filter every expense and income entry by date and category.",
@@ -58,7 +58,7 @@ const GRID_5 = "grid grid-cols-[32px_110px_150px_1fr_110px] gap-3 px-2";
 const GRID_4 = "grid grid-cols-[110px_150px_1fr_110px] gap-3 px-2";
 
 function Transactions() {
-  const { transactions, deleteTransactions } = useSpendLens();
+  const { transactions, deleteTransactions } = useSpendSense();
   const [category, setCategory] = useState("All Categories");
   const [range, setRange] = useState<RangeId>("all");
   const [selectionMode, setSelectionMode] = useState(false);

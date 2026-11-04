@@ -7,7 +7,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { money } from "@/lib/spendlens-data";
+import { money } from "@/lib/spendsense-data";
 
 function TooltipCard({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;

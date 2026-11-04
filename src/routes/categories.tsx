@@ -4,19 +4,19 @@ import { CategoryRow } from "@/components/CategoryRow";
 import { DonutChart } from "@/components/DonutChart";
 import { Navbar } from "@/components/Navbar";
 import { Card } from "@/components/SummaryCard";
-import { categoryTotals, compactMoney, money, useSpendLens } from "@/lib/spendlens-data";
+import { categoryTotals, compactMoney, money, useSpendSense } from "@/lib/spendsense-data";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/categories")({
   head: () => ({
     meta: [
-      { title: "Category Breakdown — SpendLens" },
+      { title: "Category Breakdown — SpendSense" },
       {
         name: "description",
         content:
           "Analyze how your spending is distributed across categories this month versus last month.",
       },
-      { property: "og:title", content: "Category Breakdown — SpendLens" },
+      { property: "og:title", content: "Category Breakdown — SpendSense" },
       {
         property: "og:description",
         content: "See how your spending is distributed across categories.",
@@ -28,7 +28,7 @@ export const Route = createFileRoute("/categories")({
 
 function Categories() {
   const [range, setRange] = useState<"this" | "last">("this");
-  const { transactions } = useSpendLens();
+  const { transactions } = useSpendSense();
   const now = new Date();
   const monthKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
   const thisKey = monthKey(now);
