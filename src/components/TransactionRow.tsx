@@ -6,10 +6,12 @@ export function TransactionRow({
   txn,
   selected,
   onToggle,
+  selectionMode,
 }: {
   txn: Txn;
   selected: boolean;
   onToggle: () => void;
+  selectionMode: boolean;
 }) {
   const savings = isSavings(txn);
   const income = !savings && txn.amount > 0;
@@ -21,22 +23,25 @@ export function TransactionRow({
 
   return (
     <div
-      onClick={onToggle}
+      onClick={selectionMode ? onToggle : undefined}
       className={cn(
-        "grid cursor-pointer grid-cols-[32px_110px_150px_1fr_110px] items-center gap-3 border-b border-border px-2 py-4 transition-colors last:border-0",
-        selected ? "bg-primary-soft" : "hover:bg-muted/60",
+        "grid items-center gap-3 border-b border-border px-2 py-4 transition-colors last:border-0 hover:bg-muted/60",
+        selectionMode ? "grid-cols-[32px_110px_150px_1fr_110px] cursor-pointer" : "grid-cols-[110px_150px_1fr_110px]",
+        selected && "bg-primary-soft hover:bg-primary-soft",
       )}
     >
-      <span
-        onClick={(e) => e.stopPropagation()}
-        className="flex h-8 w-8 items-center justify-center"
-      >
-        <Checkbox
-          checked={selected}
-          onCheckedChange={onToggle}
-          aria-label={`Select ${txn.note || txn.category}`}
-        />
-      </span>
+      {selectionMode && (
+        <span
+          onClick={(e) => e.stopPropagation()}
+          className="flex h-8 w-8 items-center justify-center"
+        >
+          <Checkbox
+            checked={selected}
+            onCheckedChange={onToggle}
+            aria-label={`Select ${txn.note || txn.category}`}
+          />
+        </span>
+      )}
       <span className="text-sm text-muted-foreground">{date}</span>
       <span>
         <span

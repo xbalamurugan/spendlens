@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
 export type Txn = {
   id: string;
@@ -59,6 +59,28 @@ const seed: Txn[] = [
   { id: "13", date: "2026-05-11", category: "Dining Out", note: "Coffee & bagel", amount: -12.75 },
   { id: "14", date: "2026-04-06", category: "Bills", note: "Phone bill", amount: -35.0 },
 ];
+
+const TXN_STORAGE_KEY = "spendlens:transactions";
+
+/** Read saved transactions from localStorage (client only); null when absent or invalid. */
+function readStoredTxns(): Txn[] | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(TXN_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return null;
+    return parsed.filter(
+      (t): t is Txn =>
+        !!t &&
+        typeof t === "object" &&
+        typeof (t as Txn).id === "string" &&
+        typeof (t as Txn).date === "string",
+    );
+  } catch {
+    return null;
+  }
+}
 
 /** Spend per category (expenses only), sorted descending. */
 export function categoryTotals(txns: Txn[]): { name: string; value: number }[] {
@@ -170,12 +192,36 @@ type Ctx = {
 const SpendLensContext = createContext<Ctx | null>(null);
 
 export function SpendLensProvider({ children }: { children: ReactNode }) {
-  const [transactions, setTransactions] = useState<Txn[]>(seed);
+  const [transactions, setTransactionsState] = useState<Txn[]>(seed);
   const [savingsGoal, setSavingsGoalState] = useState(5000);
 
   const setSavingsGoal = (n: number) => setSavingsGoalState(n);
 
+  // On first load: restore saved transactions; when nothing is stored yet, save the sample data.
+  useEffect(() => {
+    const stored = readStoredTxns();
+    if (stored) {
+      setTransactionsState(stored);
+    } else {
+      try {
+        window.localStorage.setItem(TXN_STORAGE_KEY, JSON.stringify(seed));
+      } catch {
+        // storage unavailable — keep in-memory sample data
+      }
+    }
+  }, []);
 
+  // Every change persists immediately so deletions survive a page refresh.
+  const setTransactions = (updater: (prev: Txn[]) => Txn[]) =>
+    setTransactionsState((prev) => {
+      const next = updater(prev);
+      try {
+        window.localStorage.setItem(TXN_STORAGE_KEY, JSON.stringify(next));
+      } catch {
+        // storage unavailable — keep in-memory state only
+      }
+      return next;
+    });
 
   const value = useMemo<Ctx>(
     () => ({
