@@ -54,7 +54,8 @@ function withinRange(isoDate: string, range: RangeId) {
   return new Date(isoDate) >= cutoff;
 }
 
-const TABLE_GRID = "grid grid-cols-[32px_110px_150px_1fr_110px] gap-3 px-2";
+const GRID_5 = "grid grid-cols-[32px_110px_150px_1fr_110px] gap-3 px-2";
+const GRID_4 = "grid grid-cols-[110px_150px_1fr_110px] gap-3 px-2";
 
 function Transactions() {
   const { transactions, deleteTransactions } = useSpendLens();
@@ -216,15 +217,17 @@ function Transactions() {
         <Card className="mt-6 overflow-x-auto p-2 sm:p-4">
           <div className="min-w-[640px]">
             <div
-              className={`${TABLE_GRID} items-center border-b border-border pb-3 pt-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground`}
+              className={`${selectionMode ? GRID_5 : GRID_4} items-center border-b border-border pb-3 pt-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground`}
             >
-              <Checkbox
-                checked={allVisibleSelected ? true : someSelected ? "indeterminate" : false}
-                onCheckedChange={toggleSelectAll}
-                aria-label="Select all"
-                disabled={filtered.length === 0}
-                className="mt-0.5"
-              />
+              {selectionMode && (
+                <Checkbox
+                  checked={allVisibleSelected ? true : someSelected ? "indeterminate" : false}
+                  onCheckedChange={toggleSelectAll}
+                  aria-label="Select all"
+                  disabled={filtered.length === 0}
+                  className="mt-0.5"
+                />
+              )}
               <span>Date</span>
               <span>Category</span>
               <span>Note</span>
@@ -258,6 +261,7 @@ function Transactions() {
                   txn={t}
                   selected={selected.has(t.id)}
                   onToggle={() => toggleRow(t.id)}
+                  selectionMode={selectionMode}
                 />
               ))
             )}
