@@ -1,5 +1,5 @@
 import { Checkbox } from "@/components/ui/checkbox";
-import { CATEGORY_COLORS, compactMoney, isSavings, money, type Txn } from "@/lib/spendlens-data";
+import { CATEGORY_COLORS, compactMoney, isSavings, money, type Txn } from "@/lib/spendsense-data";
 import { cn } from "@/lib/utils";
 
 export function TransactionRow({

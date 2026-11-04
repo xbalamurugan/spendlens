@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Card } from "@/components/SummaryCard";
 import { TrendChart } from "@/components/TrendChart";
-import { money, monthlyTotals, useSpendLens } from "@/lib/spendlens-data";
+import { money, monthlyTotals, useSpendSense } from "@/lib/spendsense-data";
 import { cn } from "@/lib/utils";
 
 const RANGES = { "3M": 3, "6M": 6, "1Y": 12, ALL: 24 } as const;
@@ -13,13 +13,13 @@ type RangeKey = keyof typeof RANGES;
 export const Route = createFileRoute("/trends")({
   head: () => ({
     meta: [
-      { title: "Spending Trends — SpendLens" },
+      { title: "Spending Trends — SpendSense" },
       {
         name: "description",
         content:
           "Track how your total expenditure moves over 3 months, 6 months, a year or your full history.",
       },
-      { property: "og:title", content: "Spending Trends — SpendLens" },
+      { property: "og:title", content: "Spending Trends — SpendSense" },
       {
         property: "og:description",
         content: "Track how your total expenditure moves over time.",
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/trends")({
 
 function Trends() {
   const [range, setRange] = useState<RangeKey>("6M");
-  const { transactions } = useSpendLens();
+  const { transactions } = useSpendSense();
   const data = monthlyTotals(transactions, RANGES[range]);
   const avg = data.reduce((s: number, d: { value: number }) => s + d.value, 0) / data.length;
   const up = (data.at(-1)?.value ?? 0) >= (data[0]?.value ?? 0);

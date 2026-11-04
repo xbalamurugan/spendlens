@@ -189,9 +189,9 @@ type Ctx = {
   setSavingsGoal: (n: number) => void;
 };
 
-const SpendLensContext = createContext<Ctx | null>(null);
+const SpendSenseContext = createContext<Ctx | null>(null);
 
-export function SpendLensProvider({ children }: { children: ReactNode }) {
+export function SpendSenseProvider({ children }: { children: ReactNode }) {
   const [transactions, setTransactionsState] = useState<Txn[]>(seed);
   const [savingsGoal, setSavingsGoalState] = useState(5000);
 
@@ -243,11 +243,11 @@ export function SpendLensProvider({ children }: { children: ReactNode }) {
     [transactions, savingsGoal],
   );
 
-  return <SpendLensContext.Provider value={value}>{children}</SpendLensContext.Provider>;
+  return <SpendSenseContext.Provider value={value}>{children}</SpendSenseContext.Provider>;
 }
 
-export function useSpendLens() {
-  const ctx = useContext(SpendLensContext);
-  if (!ctx) throw new Error("useSpendLens must be used inside SpendLensProvider");
+export function useSpendSense() {
+  const ctx = useContext(SpendSenseContext);
+  if (!ctx) throw new Error("useSpendSense must be used inside SpendSenseProvider");
   return ctx;
 }

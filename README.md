@@ -1,19 +1,19 @@
-# SpendLens Insights
+# SpendSense Insights
 
-# SpendLens — Lovable Build Prompt
+# SpendSense — Lovable Build Prompt
 
 Copy everything below into Lovable as your starting prompt.
 
 ---
 
-Build a personal finance / expense-tracking web app called **SpendLens**.
+Build a personal finance / expense-tracking web app called **SpendSense**.
 
 ## Design System
 
 - **Primary color:** Indigo/Violet `#5B4FE9` (buttons, active tabs, links, chart lines)
 - **Background:** very light gray-blue `#F5F6FA`
 - **Cards:** white, `rounded-xl`, subtle border (`#E5E7EB`), soft shadow, generous padding (24-32px)
-- **Typography:** clean modern sans-serif (Inter or similar). Large bold serif-free wordmark "SpendLens" in the primary color as the logo/header.
+- **Typography:** clean modern sans-serif (Inter or similar). Large bold serif-free wordmark "SpendSense" in the primary color as the logo/header.
 - **Text hierarchy:** dark gray `#111827` for headings/values, medium gray `#6B7280` for labels/secondary text
 - **Accent colors for data:** deep orange/rust for one donut segment, indigo shades for others, red `#EF4444` for negative/error states, green or indigo for positive amounts
 - **Buttons:** solid indigo, white uppercase-ish text, rounded, full-width on forms
@@ -22,7 +22,7 @@ Build a personal finance / expense-tracking web app called **SpendLens**.
 
 ## Global Layout
 
-- Top navbar (post-login): "SpendLens" logo (left, indigo), center/left nav links — **Dashboard, Transactions, Categories, Trends** — active link underlined in indigo, bold. Right side: notification bell icon + user/account icon.
+- Top navbar (post-login): "SpendSense" logo (left, indigo), center/left nav links — **Dashboard, Transactions, Categories, Trends** — active link underlined in indigo, bold. Right side: notification bell icon + user/account icon.
 - Auth pages have no navbar — just the centered logo above a white card on the light background.
 - Fully responsive, mobile-first.
 

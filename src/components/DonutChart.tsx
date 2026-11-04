@@ -1,5 +1,5 @@
 import { Cell, Pie, PieChart, ResponsiveContainer } from "recharts";
-import { CATEGORY_COLORS } from "@/lib/spendlens-data";
+import { CATEGORY_COLORS } from "@/lib/spendsense-data";
 
 export function DonutChart({
   data,

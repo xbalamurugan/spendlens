@@ -12,7 +12,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { SpendLensProvider } from "../lib/spendlens-data";
+import { SpendSenseProvider } from "../lib/spendsense-data";
 import { Toaster } from "@/components/ui/sonner";
 
 
@@ -81,12 +81,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "SpendLens — Personal expense tracking" },
+      { title: "SpendSense — Personal expense tracking" },
       {
         name: "description",
-        content: "SpendLens helps you track expenses, see category breakdowns and follow spending trends.",
+        content: "SpendSense helps you track expenses, see category breakdowns and follow spending trends.",
       },
-      { property: "og:title", content: "SpendLens — Personal expense tracking" },
+      { property: "og:title", content: "SpendSense — Personal expense tracking" },
       {
         property: "og:description",
         content: "Track expenses, see category breakdowns and follow spending trends.",
@@ -134,11 +134,11 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SpendLensProvider>
+      <SpendSenseProvider>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
         <Toaster position="bottom-right" richColors />
-      </SpendLensProvider>
+      </SpendSenseProvider>
     </QueryClientProvider>
   );
 }

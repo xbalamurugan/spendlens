@@ -6,18 +6,18 @@ import { DonutChart } from "@/components/DonutChart";
 import { Navbar } from "@/components/Navbar";
 import { Card, SummaryCard, type PillTone } from "@/components/SummaryCard";
 import { TrendChart } from "@/components/TrendChart";
-import { categoryTotals, compactMoney, monthlyTotals, thisMonthIncome, thisMonthSavings, thisMonthTotal, useSpendLens } from "@/lib/spendlens-data";
+import { categoryTotals, compactMoney, monthlyTotals, thisMonthIncome, thisMonthSavings, thisMonthTotal, useSpendSense } from "@/lib/spendsense-data";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — SpendLens" },
+      { title: "Dashboard — SpendSense" },
       {
         name: "description",
         content:
           "See monthly spend, your top category, savings goal progress and a six month spending trend at a glance.",
       },
-      { property: "og:title", content: "Dashboard — SpendLens" },
+      { property: "og:title", content: "Dashboard — SpendSense" },
       {
         property: "og:description",
         content: "Monthly spend, top category, savings progress and trends at a glance.",
@@ -31,7 +31,7 @@ function Dashboard() {
   const [open, setOpen] = useState(false);
   const [goalOpen, setGoalOpen] = useState(false);
   const [goalDraft, setGoalDraft] = useState("");
-  const { transactions, savingsGoal, setSavingsGoal } = useSpendLens();
+  const { transactions, savingsGoal, setSavingsGoal } = useSpendSense();
   const total = thisMonthTotal(transactions);
   const income = thisMonthIncome(transactions);
 

@@ -1,4 +1,4 @@
-import { CATEGORY_COLORS, compactMoney, money } from "@/lib/spendlens-data";
+import { CATEGORY_COLORS, compactMoney, money } from "@/lib/spendsense-data";
 
 export function CategoryRow({
   name,
