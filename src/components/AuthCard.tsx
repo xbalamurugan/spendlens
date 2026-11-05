@@ -25,7 +25,7 @@ function Field({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <label className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
           {label}
         </label>
         {right}
@@ -36,8 +36,10 @@ function Field({
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
         className={cn(
-          "mt-2 w-full border-b-2 bg-transparent pb-2 text-sm text-foreground outline-none placeholder:text-muted-foreground/70 transition-colors",
-          error ? "border-destructive" : "border-border focus:border-primary",
+          "mt-2 h-11 w-full rounded-lg border bg-card px-3 text-sm text-foreground outline-none placeholder:text-muted-foreground/70 transition-colors",
+          error
+            ? "border-destructive"
+            : "border-border hover:border-muted-foreground/40 focus:border-primary",
         )}
       />
       {error && (
@@ -74,8 +76,8 @@ export function AuthCard() {
   };
 
   return (
-    <div className="w-full max-w-[460px] rounded-xl border border-border bg-card p-6 shadow-card sm:p-8">
-      <div className="flex gap-6 border-b border-border">
+    <div className="flex min-h-[440px] w-full flex-col rounded-2xl border border-border bg-card p-8">
+      <div className="grid grid-cols-2">
         {(["login", "signup"] as Tab[]).map((t) => (
           <button
             key={t}
@@ -84,10 +86,10 @@ export function AuthCard() {
               setErrors({});
             }}
             className={cn(
-              "-mb-px border-b-2 pb-3 text-xs font-bold uppercase tracking-widest transition-colors",
+              "flex h-12 items-center justify-center border-b-2 text-xs font-bold uppercase tracking-widest transition-colors",
               tab === t
                 ? "border-primary text-primary"
-                : "border-transparent text-muted-foreground hover:text-foreground",
+                : "border-border text-muted-foreground hover:text-foreground",
             )}
           >
             {t === "login" ? "Log In" : "Sign Up"}
@@ -95,7 +97,7 @@ export function AuthCard() {
         ))}
       </div>
 
-      <div className="mt-8 grid gap-6">
+      <div className="mt-6 grid gap-4">
         {tab === "signup" && (
           <Field
             label="Full Name"
@@ -132,22 +134,24 @@ export function AuthCard() {
         />
       </div>
 
-      <button
-        onClick={submit}
-        disabled={loading}
-        className="mt-8 flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-xs font-bold uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-70"
-      >
-        {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-        {loading ? (tab === "login" ? "Logging in" : "Creating") : tab === "login" ? "Log in" : "Create account"}
-      </button>
-
-      <div className="mt-6 text-center">
+      <div className="mt-auto pt-6">
         <button
-          onClick={() => navigate({ to: "/dashboard" })}
-          className="text-sm text-muted-foreground transition-colors hover:text-primary"
+          onClick={submit}
+          disabled={loading}
+          className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-primary text-xs font-bold uppercase tracking-widest text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-70"
         >
-          Continue as guest
+          {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+          {loading ? (tab === "login" ? "Logging in" : "Creating") : tab === "login" ? "Log in" : "Create account"}
         </button>
+
+        <div className="mt-4 text-center">
+          <button
+            onClick={() => navigate({ to: "/dashboard" })}
+            className="text-sm text-muted-foreground transition-colors hover:text-primary"
+          >
+            Continue as guest
+          </button>
+        </div>
       </div>
     </div>
   );
