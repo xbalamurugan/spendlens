@@ -24,7 +24,7 @@ function AuthPage() {
   return (
     <main className="flex min-h-screen flex-col items-center bg-background px-4 pb-16 pt-[12vh]">
       <div className="flex w-full max-w-[400px] flex-col">
-        <h1 className="wordmark mb-6 text-4xl">SpendSense</h1>
+        <h1 className="wordmark mb-6 text-center text-4xl">SpendSense</h1>
         <AuthCard />
       </div>
     </main>
