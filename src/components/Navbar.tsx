@@ -41,11 +41,6 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-border bg-card/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-8 px-4 sm:px-6">
         <Link to="/dashboard" className="flex items-center gap-2">
-          <img
-            src={logoAsset.url}
-            alt="SpendSense logo"
-            className="h-8 w-8 shrink-0"
-          />
           <span className="wordmark text-2xl leading-none">SpendSense</span>
         </Link>
 
