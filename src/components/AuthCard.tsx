@@ -114,7 +114,7 @@ export function AuthCard() {
   };
 
   return (
-    <div className="flex min-h-[540px] w-full flex-col rounded-2xl border border-border bg-card p-8">
+    <div className="flex min-h-[584px] w-full flex-col rounded-2xl border border-border bg-card p-8">
       <div className="grid grid-cols-2">
         {(["login", "signup"] as Tab[]).map((t) => (
           <button
