@@ -1,8 +1,9 @@
 import { useNavigate } from "@tanstack/react-router";
 import { AlertCircle, Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { lovable } from "@/integrations/lovable/index";
+import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 type Tab = "login" | "signup";
@@ -64,6 +65,17 @@ export function AuthCard() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
+  // After returning from Google, send signed-in users on to the dashboard.
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) navigate({ to: "/dashboard" });
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session) navigate({ to: "/dashboard" });
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [navigate]);
+
   const signInWithGoogle = async () => {
     setGoogleLoading(true);
     try {
@@ -102,7 +114,7 @@ export function AuthCard() {
   };
 
   return (
-    <div className="flex min-h-[440px] w-full flex-col rounded-2xl border border-border bg-card p-8">
+    <div className="flex min-h-[540px] w-full flex-col rounded-2xl border border-border bg-card p-8">
       <div className="grid grid-cols-2">
         {(["login", "signup"] as Tab[]).map((t) => (
           <button
@@ -186,7 +198,7 @@ export function AuthCard() {
           ) : (
             <>
               <svg
-                className="absolute left-4 h-5 w-5"
+                className="absolute left-4 h-5 w-5" xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 aria-hidden="true"
               >
