@@ -72,7 +72,7 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
         setSuggestionError(result.error ?? "Couldn't suggest a category.");
       } else {
         setCategory(result.category);
-        setCustomCategory("");
+        setCustomCategory(result.category === OTHER ? "Other" : "");
       }
     } catch {
       setSuggestionError("Couldn't suggest a category. Choose one manually or try again.");
