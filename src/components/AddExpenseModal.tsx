@@ -252,7 +252,7 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
           </div>
           <div>
             <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Note (optional)
+              Description (optional)
             </label>
             <input
               value={note}
@@ -261,7 +261,7 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
                 setSuggestionError("");
               }}
               maxLength={200}
-              placeholder="What was this for?"
+              placeholder="e.g. Groceries at local market"
               className="mt-2 w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
             />
           </div>

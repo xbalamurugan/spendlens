@@ -26,7 +26,7 @@ function getSafeProviderMessage(error: unknown): string | null {
 }
 
 export const suggestCategory = createServerFn({ method: "POST" })
-  .inputValidator((input: { description: string }) => {
+  .validator((input: { description: string }) => {
     if (typeof input?.description !== "string") throw new Error("Enter a transaction description first.");
     const description = input.description.trim();
     if (!description) throw new Error("Enter a transaction description first.");
