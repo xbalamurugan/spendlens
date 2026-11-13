@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep AI category calls in server-only helpers behind client-importable `.functions.ts` wrappers so gateway credentials never enter browser bundles.
