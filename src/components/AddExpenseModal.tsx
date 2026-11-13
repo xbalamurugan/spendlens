@@ -1,5 +1,8 @@
-import { X } from "lucide-react";
+import { LoaderCircle, Sparkles, X } from "lucide-react";
 import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { Button } from "@/components/ui/button";
+import { suggestCategory } from "@/lib/category-suggestion.functions";
 import { MAX_AMOUNT, money, useSpendSense } from "@/lib/spendsense-data";
 import { cn } from "@/lib/utils";
 
@@ -40,6 +43,9 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
   const [date, setDate] = useState(today());
   const [note, setNote] = useState("");
   const [error, setError] = useState("");
+  const [suggestionError, setSuggestionError] = useState("");
+  const [isSuggesting, setIsSuggesting] = useState(false);
+  const suggestCategoryFn = useServerFn(suggestCategory);
 
   if (!open) return null;
 
@@ -52,6 +58,27 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
     setCategory(PICKS[m][0]!);
     setCustomCategory("");
     setError("");
+    setSuggestionError("");
+  };
+
+  const onSuggestCategory = async () => {
+    const description = note.trim();
+    if (!description || isSuggesting) return;
+    setSuggestionError("");
+    setIsSuggesting(true);
+    try {
+      const result = await suggestCategoryFn({ data: { description } });
+      if (result.error || !result.category) {
+        setSuggestionError(result.error ?? "Couldn't suggest a category.");
+      } else {
+        setCategory(result.category);
+        setCustomCategory("");
+      }
+    } catch {
+      setSuggestionError("Couldn't suggest a category. Choose one manually or try again.");
+    } finally {
+      setIsSuggesting(false);
+    }
   };
 
   const onAmountChange = (raw: string) => {
@@ -63,6 +90,7 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
       return;
     }
     setError("");
+    setSuggestionError("");
     setAmount(next);
   };
 
@@ -158,9 +186,25 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
         </div>
 
         <div className="mt-6">
-          <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Category
-          </label>
+          <div className="flex items-center justify-between gap-3">
+            <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              Category
+            </label>
+            {mode === "expense" && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={onSuggestCategory}
+                disabled={!note.trim() || isSuggesting}
+                className="h-8 px-2 text-primary"
+                aria-label="Suggest expense category from description"
+              >
+                {isSuggesting ? <LoaderCircle className="animate-spin" /> : <Sparkles />}
+                {isSuggesting ? "Suggesting…" : "Suggest with AI"}
+              </Button>
+            )}
+          </div>
           <div className="mt-2 flex flex-wrap gap-2">
             {picks.map((c) => (
               <button
@@ -187,6 +231,11 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
               className="mt-3 w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
             />
           )}
+          {suggestionError && (
+            <p role="status" className="mt-2 text-xs font-medium text-destructive">
+              {suggestionError}
+            </p>
+          )}
         </div>
 
         <div className="mt-6 grid gap-4">
@@ -207,7 +256,11 @@ export function AddExpenseModal({ open, onClose }: { open: boolean; onClose: () 
             </label>
             <input
               value={note}
-              onChange={(e) => setNote(e.target.value)}
+              onChange={(e) => {
+                setNote(e.target.value.slice(0, 200));
+                setSuggestionError("");
+              }}
+              maxLength={200}
               placeholder="What was this for?"
               className="mt-2 w-full rounded-lg border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
             />
