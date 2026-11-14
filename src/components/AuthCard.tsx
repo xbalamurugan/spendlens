@@ -172,7 +172,7 @@ export function AuthCard() {
         />
       </div>
 
-      <div className="mt-auto pt-6">
+      <div className="mt-4">
         <button
           onClick={submit}
           disabled={loading || googleLoading}
