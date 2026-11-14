@@ -114,7 +114,7 @@ export function AuthCard() {
   };
 
   return (
-    <div className="flex min-h-[584px] w-full flex-col rounded-2xl border border-border bg-card p-8">
+    <div className="flex w-full flex-col rounded-2xl border border-border bg-card p-8">
       <div className="grid grid-cols-2">
         {(["login", "signup"] as Tab[]).map((t) => (
           <button
@@ -181,12 +181,6 @@ export function AuthCard() {
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
           {loading ? (tab === "login" ? "Logging in" : "Creating") : tab === "login" ? "Log in" : "Create account"}
         </button>
-
-        <div className="mt-4 flex items-center gap-4">
-          <span className="h-px flex-1 bg-border" />
-          <span className="text-xs text-muted-foreground">or</span>
-          <span className="h-px flex-1 bg-border" />
-        </div>
 
         <button
           onClick={signInWithGoogle}
